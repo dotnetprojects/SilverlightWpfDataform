@@ -1,4 +1,4 @@
-wpfdataform
-===========
+WPF DataForm
+============
 
-Updated Version of WpfDataform (http://wpfdataform.codeplex.com/)
+Since the Data Form on http://wpfdataform.codeplex.com/ is not longer updated, I will host e Bugfixed Version here!
