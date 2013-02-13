@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -12,8 +12,8 @@ using System.Windows.Documents;
 using System.Windows.Markup;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
-
 using WPF.DataForm;
+using Core.DataForm;
 
 using Xceed.Wpf.Toolkit;
 
@@ -271,13 +271,18 @@ namespace System.Windows.Controls
                 {
                     editorControl.ToolTip = displays[property.Name].GetDescription();
                     Validation.SetErrorTemplate(editorControl, errorTemplate);
+                    editorControl.HorizontalAlignment = Windows.HorizontalAlignment.Left;
                 }
 
                 if (editorControl == null)
                     continue;
 
                 // Add to view
-                grid1.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(28) });
+                RowDefinition newRow = new RowDefinition() { Height = new GridLength(28) };
+                grid1.RowDefinitions.Add(newRow);
+                if (editorControl.Height.CompareTo( Double.NaN) !=0 ) { 
+                    newRow.Height = new GridLength(editorControl.Height);
+                }
                 Grid.SetColumn(lbl, 0);
                 Grid.SetRow(lbl, row);
                 Grid.SetColumn(editorControl, 1);
@@ -293,94 +298,200 @@ namespace System.Windows.Controls
             this.Layout.Children.Add(grid1);
         }
 
+        #region Control Generators
+
+        private Control GenerateCheckBox(PropertyInfo property, Binding binding)
+        {
+            CheckBox checkBox = new CheckBox() { VerticalAlignment = VerticalAlignment.Center };
+            checkBox.IsEnabled = (bindables[property.Name].Direction == BindingDirection.TwoWay);
+            this.bindings.Add(property.Name, checkBox.SetBinding(CheckBox.IsCheckedProperty, binding));
+            return checkBox;
+        }
+        private Control GenerateThreeStateCheckBox(PropertyInfo property, Binding binding)
+        {
+            CheckBox checkBox = new CheckBox() { VerticalAlignment = VerticalAlignment.Center };
+            checkBox.IsThreeState = true;
+            checkBox.IsEnabled = (bindables[property.Name].Direction == BindingDirection.TwoWay);
+            this.bindings.Add(property.Name, checkBox.SetBinding(CheckBox.IsCheckedProperty, binding));
+            return checkBox;
+        }
+
+        private Control GenerateDatePicker(PropertyInfo property, Binding binding)
+        {
+            DatePicker control = new DatePicker() { Margin = new Thickness(0, 2, 22, 2) };
+            this.bindings.Add(property.Name, control.SetBinding(DatePicker.SelectedDateProperty, binding));
+            return control;
+        }
+
+        private Control GenerateComboBox(PropertyInfo property, Binding binding)
+        {
+
+            ComboBox comboBox = new ComboBox() { Margin = new Thickness(0, 2, 18, 2) };
+            comboBox.ItemsSource = Enum.GetValues(property.PropertyType);
+            comboBox.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
+            this.bindings.Add(property.Name, comboBox.SetBinding(ComboBox.SelectedItemProperty, binding));
+
+            return comboBox;
+        }
+
+        private Control GenerateWaterMarkedTextBox(PropertyInfo property, Binding binding)
+        {
+            WatermarkTextBox txtBox = new WatermarkTextBox() { Margin = new Thickness(0, 3, 18, 3), Watermark = displays[property.Name].GetPrompt() };
+            txtBox.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
+
+            // Binding
+            this.bindings.Add(property.Name, txtBox.SetBinding(TextBox.TextProperty, binding));
+
+            return txtBox;
+        }
+
+        private Control GenerateIntegerUpDow(PropertyInfo property, Binding binding)
+        {
+            IntegerUpDown integerUpDown = new IntegerUpDown() { Margin = new Thickness(0, 3, 18, 3) };
+            integerUpDown.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
+
+            // Binding
+            this.bindings.Add(property.Name, integerUpDown.SetBinding(IntegerUpDown.ValueProperty, binding));
+
+            return integerUpDown;
+        }
+
+        private Control GenerateDecimalUpDown(PropertyInfo property, Binding binding) 
+        {
+            DecimalUpDown decimalUpDown = new DecimalUpDown() { Margin = new Thickness(0, 3, 18, 3) };
+            decimalUpDown.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
+
+            // Binding
+            this.bindings.Add(property.Name, decimalUpDown.SetBinding(DecimalUpDown.ValueProperty, binding));
+
+            return decimalUpDown;
+        }
+
+        private Control GenerateCalculator(PropertyInfo property, Binding binding)
+        {
+            CalculatorUpDown calculatorUpDown = new CalculatorUpDown() { Margin = new Thickness(0, 3, 18, 3) };
+            calculatorUpDown.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
+
+            // Binding
+            this.bindings.Add(property.Name, calculatorUpDown.SetBinding(CalculatorUpDown.ValueProperty, binding));
+
+            return calculatorUpDown;
+        }
+
+        private Control GenerateColorPicker(PropertyInfo property, Binding binding)
+        {
+            ColorPicker colorPicker = new ColorPicker() { Margin = new Thickness(0, 3, 18, 3) };
+            colorPicker.IsEnabled = (bindables[property.Name].Direction == BindingDirection.TwoWay);
+
+            // Binding
+            this.bindings.Add(property.Name, colorPicker.SetBinding(ColorPicker.SelectedColorProperty, binding));
+
+            return colorPicker;
+        }
+        private Control GenerateMultiLineTextBox(PropertyInfo property, Binding binding, int? PreferredHeight)
+        {
+            TextBox txtBox = new TextBox() { Margin = new Thickness(0, 3, 18, 3),  TextWrapping= TextWrapping.Wrap };
+            if (PreferredHeight != null)
+            {
+                txtBox.Height = (int)PreferredHeight;
+            }
+            else 
+            { 
+                txtBox.Height = 56;
+            }
+               
+            txtBox.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
+
+            // Binding
+            this.bindings.Add(property.Name, txtBox.SetBinding(TextBox.TextProperty, binding));
+
+            return txtBox;
+        }
+
+        #endregion
+
         private Control GetControlFromProperty(PropertyInfo property, Binding binding)
         {
-            if (property.PropertyType == typeof(bool))
-            {
-                CheckBox checkBox = new CheckBox() { VerticalAlignment = VerticalAlignment.Center};
-                checkBox.IsEnabled = (bindables[property.Name].Direction == BindingDirection.TwoWay);
-                this.bindings.Add(property.Name, checkBox.SetBinding(CheckBox.IsCheckedProperty, binding));
-                return checkBox;
-            }
-            else if (property.PropertyType == typeof(bool?))
-            {
-                CheckBox checkBox = new CheckBox() { VerticalAlignment = VerticalAlignment.Center };
-                checkBox.IsThreeState = true;
-                checkBox.IsEnabled = (bindables[property.Name].Direction == BindingDirection.TwoWay);
-                this.bindings.Add(property.Name, checkBox.SetBinding(CheckBox.IsCheckedProperty, binding));
-
-                return checkBox;
-            }
-            else if (property.PropertyType == typeof(DateTime) || property.PropertyType == typeof(DateTime?))
-            {
-                DatePicker control = new DatePicker() { Margin = new Thickness(0, 2, 22, 2) };
-                this.bindings.Add(property.Name, control.SetBinding(DatePicker.SelectedDateProperty, binding));
-
-                return control;
-            }
-            else if (property.PropertyType.IsEnum)
-            {
-                ComboBox comboBox = new ComboBox() { Margin = new Thickness(0, 2, 18, 2) };
-                comboBox.ItemsSource = Enum.GetValues(property.PropertyType);
-                comboBox.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
-                this.bindings.Add(property.Name, comboBox.SetBinding(ComboBox.SelectedItemProperty, binding));
-
-                return comboBox;
-            }
-            else if (property.PropertyType == typeof(string))
-            {
-                WatermarkTextBox txtBox = new WatermarkTextBox() { Margin = new Thickness(0, 3, 18, 3), Watermark = displays[property.Name].GetPrompt() };
-                txtBox.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
-                
-                // Binding
-                this.bindings.Add(property.Name, txtBox.SetBinding(TextBox.TextProperty, binding));
-
-                return txtBox;
-            }
-            else if (property.PropertyType == typeof(Int32) || property.PropertyType == typeof(UInt32) || property.PropertyType == typeof(Int16) || property.PropertyType == typeof(UInt16) || property.PropertyType == typeof(Int64) || property.PropertyType == typeof(UInt64) || property.PropertyType == typeof(byte) || property.PropertyType == typeof(sbyte))
-            {
-                IntegerUpDown integerUpDown = new IntegerUpDown() { Margin = new Thickness(0, 3, 18, 3) };
-                integerUpDown.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
-
-                // Binding
-                this.bindings.Add(property.Name, integerUpDown.SetBinding(IntegerUpDown.ValueProperty, binding));
-
-                return integerUpDown;
-            }
-            else if (property.PropertyType == typeof(Decimal))
-            {
-                DecimalUpDown decimalUpDown = new DecimalUpDown() { Margin = new Thickness(0, 3, 18, 3) };
-                decimalUpDown.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
-
-                // Binding
-                this.bindings.Add(property.Name, decimalUpDown.SetBinding(DecimalUpDown.ValueProperty, binding));
-
-                return decimalUpDown;
-            }
-            else if (property.PropertyType == typeof(Single) || property.PropertyType == typeof(Double))
-            {
-                CalculatorUpDown calculatorUpDown = new CalculatorUpDown() { Margin = new Thickness(0, 3, 18, 3) };
-                calculatorUpDown.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
-
-                // Binding
-                this.bindings.Add(property.Name, calculatorUpDown.SetBinding(CalculatorUpDown.ValueProperty, binding));
-
-                return calculatorUpDown;
-            }
-            else if (property.PropertyType == typeof(Color))
-            {
-                ColorPicker colorPicker = new ColorPicker() { Margin = new Thickness(0, 3, 18, 3) };
-                colorPicker.IsEnabled = (bindables[property.Name].Direction == BindingDirection.TwoWay);
-
-                // Binding
-                this.bindings.Add(property.Name, colorPicker.SetBinding(ColorPicker.SelectedColorProperty, binding));
-
-                return colorPicker;
-            }
+            // check attribute on this property to determine if we use defaults
+            object[] attrs = property.GetCustomAttributes(typeof(InputTypeAttribute), false);
+            InputTypeAttribute display;
+            if (attrs.Length == 1)
+                display = (InputTypeAttribute)attrs[0];
             else
+                display = new InputTypeAttribute() {  FormType= InputTypeAttribute.FormTypes.@default };
+
+            Control control = null;
+            if (display.FormType == InputTypeAttribute.FormTypes.@default)
             {
-                return null;
+                if (property.PropertyType == typeof(bool))
+                {
+                    control = GenerateCheckBox(property, binding);
+                }
+                else if (property.PropertyType == typeof(bool?))
+                {
+                    control = GenerateThreeStateCheckBox(property, binding);
+                }
+                else if (property.PropertyType == typeof(DateTime) || property.PropertyType == typeof(DateTime?))
+                {
+                    control = GenerateDatePicker(property, binding);
+                }
+                else if (property.PropertyType.IsEnum)
+                {
+                    control = GenerateComboBox(property, binding);
+                }
+                else if (property.PropertyType == typeof(string))
+                {
+                    control = GenerateWaterMarkedTextBox(property, binding);
+                }
+                else if (property.PropertyType == typeof(Int32) || property.PropertyType == typeof(UInt32) || property.PropertyType == typeof(Int16) || property.PropertyType == typeof(UInt16) || property.PropertyType == typeof(Int64) || property.PropertyType == typeof(UInt64) || property.PropertyType == typeof(byte) || property.PropertyType == typeof(sbyte))
+                {
+                    control = GenerateIntegerUpDow(property, binding);
+                }
+                else if (property.PropertyType == typeof(Decimal))
+                {
+                    control = GenerateDecimalUpDown(property, binding);
+                }
+                else if (property.PropertyType == typeof(Single) || property.PropertyType == typeof(Double))
+                {
+                    control = GenerateCalculator(property, binding);
+                }
+                else if (property.PropertyType == typeof(Color))
+                {
+                    control = GenerateColorPicker(property, binding);
+                }
+                else
+                {
+                    control = null;
+                }
             }
+            else {  // we direct the object
+                switch (display.FormType)
+                {
+                    case InputTypeAttribute.FormTypes.box:
+                        control = GenerateWaterMarkedTextBox(property, binding);
+                        break;
+                    case InputTypeAttribute.FormTypes.calculator:
+                        control = GenerateCalculator(property, binding);
+                        break;
+                    case InputTypeAttribute.FormTypes.check:
+                        control = GenerateCheckBox(property, binding);
+                        break;
+                    case InputTypeAttribute.FormTypes.dates:
+                        control = GenerateDatePicker(property, binding);
+                        break;
+                    case InputTypeAttribute.FormTypes.textArea:
+                        control = GenerateMultiLineTextBox(property, binding, display.PreferredHeight);
+                        break;
+                    default:
+                        break;
+                }
+            
+            }
+            if (display.PreferredWidth != null && control != null) 
+            {
+                control.Width = (int)display.PreferredWidth;
+            }
+            return control;
         }
 
         private UIElement GetLabelFromProperty(PropertyInfo prop)
