@@ -6,6 +6,8 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 using System.Diagnostics;
 
+using WPF.DataForm;
+
 namespace Demo
 {
     public class Person : INotifyPropertyChanged
@@ -92,6 +94,7 @@ namespace Demo
 
         public double Weight { get; set; }
 
+        [InputType()]
         public System.Windows.Media.Color FaceColor { get; set; }
 
         public bool? Is_Admin { get; set; }

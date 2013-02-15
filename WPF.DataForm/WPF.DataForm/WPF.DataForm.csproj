@@ -53,6 +53,7 @@
     <Compile Include="DataForm.xaml.cs">
       <DependentUpon>DataForm.xaml</DependentUpon>
     </Compile>
+    <Compile Include="InputTypeAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -13,7 +13,6 @@ using System.Windows.Markup;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
 using WPF.DataForm;
-using Core.DataForm;
 
 using Xceed.Wpf.Toolkit;
 
