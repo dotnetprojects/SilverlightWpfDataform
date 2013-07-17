@@ -80,6 +80,11 @@ namespace System.Windows.Controls
         }
         #endregion
 
+        #region Events
+
+        public event EventHandler<DataFormAutoGeneratingFieldEventArgs> AutoGeneratingField;
+
+        #endregion
         private ControlTemplate errorTemplate;
         private Dictionary<string, PropertyInfo> properties = new Dictionary<string, PropertyInfo>();
         private Dictionary<string, BindableAttribute> bindables = new Dictionary<string, BindableAttribute>();
@@ -266,30 +271,38 @@ namespace System.Windows.Controls
                 // Control creation
                 Control editorControl = this.GetControlFromProperty(property, binding);
 
-                if (editorControl != null)
-                {
-                    editorControl.ToolTip = displays[property.Name].GetDescription();
-                    Validation.SetErrorTemplate(editorControl, errorTemplate);
-                    editorControl.HorizontalAlignment = Windows.HorizontalAlignment.Left;
-                }
-
                 if (editorControl == null)
                     continue;
 
+                var df = new DataField() { Content = editorControl, Label = lbl };
+
+                DataFormAutoGeneratingFieldEventArgs e = new DataFormAutoGeneratingFieldEventArgs(property.Name, property.PropertyType, df);
+                EventHandler<DataFormAutoGeneratingFieldEventArgs> eventHandler = this.AutoGeneratingField;
+                if (eventHandler != null)
+                    eventHandler(this, e);
+
+                if (e.Cancel)
+                    continue;
+
+                df.Content.ToolTip = displays[property.Name].GetDescription();
+                Validation.SetErrorTemplate(df.Content, errorTemplate);
+                df.Content.HorizontalAlignment = Windows.HorizontalAlignment.Left;
+                
                 // Add to view
                 RowDefinition newRow = new RowDefinition() { Height = new GridLength(28) };
                 grid1.RowDefinitions.Add(newRow);
-                if (editorControl.Height.CompareTo( Double.NaN) !=0 ) { 
-                    newRow.Height = new GridLength(editorControl.Height);
+                if (df.Content.Height.CompareTo(Double.NaN) != 0)
+                {
+                    newRow.Height = new GridLength(df.Content.Height);
                 }
-                Grid.SetColumn(lbl, 0);
-                Grid.SetRow(lbl, row);
-                Grid.SetColumn(editorControl, 1);
-                Grid.SetRow(editorControl, row);
+                Grid.SetColumn(df.Label, 0);
+                Grid.SetRow(df.Label, row);
+                Grid.SetColumn(df.Content, 1);
+                Grid.SetRow(df.Content, row);
 
-                grid1.Children.Add(lbl);
-                grid1.Children.Add(editorControl);
-                this.controls.Add(property.Name, editorControl);
+                grid1.Children.Add(df.Label);
+                grid1.Children.Add(df.Content);
+                this.controls.Add(property.Name, df.Content);
 
                 row++;
             }

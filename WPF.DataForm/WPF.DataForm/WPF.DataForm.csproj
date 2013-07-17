@@ -49,9 +49,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AttributeValidationRule.cs" />
+    <Compile Include="DataField.cs" />
     <Compile Include="DataForm.xaml.cs">
       <DependentUpon>DataForm.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DataFormAutoGeneratingFieldEventArgs.cs" />
     <Compile Include="InputTypeAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
