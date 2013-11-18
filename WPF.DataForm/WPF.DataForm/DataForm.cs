@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -18,10 +18,7 @@ using Xceed.Wpf.Toolkit;
 
 namespace System.Windows.Controls
 {
-    /// <summary>
-    /// Logique d'interaction pour DataForm.xaml
-    /// </summary>
-    public partial class DataForm : UserControl, INotifyPropertyChanged
+    public class DataForm : Control, INotifyPropertyChanged
     {
         #region INotifyPropertyChanged Membres
 
@@ -47,6 +44,18 @@ namespace System.Windows.Controls
         }
         #endregion
 
+
+
+        public ControlTemplate ErrorTemplate
+        {
+            get { return (ControlTemplate)GetValue(ErrorTemplateProperty); }
+            set { SetValue(ErrorTemplateProperty, value); }
+        }
+
+        public static readonly DependencyProperty ErrorTemplateProperty =
+            DependencyProperty.Register("ErrorTemplate", typeof(ControlTemplate), typeof(DataForm), new PropertyMetadata(null));
+
+        
 
         #region CurrentItem
         public object CurrentItem
@@ -85,7 +94,6 @@ namespace System.Windows.Controls
         public event EventHandler<DataFormAutoGeneratingFieldEventArgs> AutoGeneratingField;
 
         #endregion
-        private ControlTemplate errorTemplate;
         private Dictionary<string, PropertyInfo> properties = new Dictionary<string, PropertyInfo>();
         private Dictionary<string, BindableAttribute> bindables = new Dictionary<string, BindableAttribute>();
         private Dictionary<string, BindingExpressionBase> bindings = new Dictionary<string, BindingExpressionBase>();
@@ -94,7 +102,7 @@ namespace System.Windows.Controls
         private Dictionary<string, List<ValidationRule>> rules = new Dictionary<string, List<ValidationRule>>();
         private Dictionary<string, DependencyObject> controls = new Dictionary<string, DependencyObject>();
 
-
+        private Grid partGrid;
 
         public bool DefaultReadOnly
         {
@@ -115,12 +123,21 @@ namespace System.Windows.Controls
             }
         }
 
-        public DataForm()
+        static DataForm()
         {
-            InitializeComponent();
-
-            this.errorTemplate = this.Resources["errorTemplate"] as ControlTemplate;
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(DataForm), new FrameworkPropertyMetadata(typeof(DataForm)));
         }
+
+        public DataForm()
+        { }
+
+        public override void OnApplyTemplate()
+        {
+            this.partGrid = GetTemplateChild("PART_Grid") as Grid;
+
+            InvalidateForm();
+        }
+
 
         private void CurrentItemChanged()
         {
@@ -163,7 +180,7 @@ namespace System.Windows.Controls
             }
 
             BindableAttribute bindable = ((BindableAttribute[])dataType.GetCustomAttributes(typeof(System.ComponentModel.BindableAttribute), true)).FirstOrDefault();
-            
+
             foreach (PropertyInfo property in properties)
             {
                 BindableAttribute propBindable = ((BindableAttribute[])property.GetCustomAttributes(typeof(System.ComponentModel.BindableAttribute), true)).FirstOrDefault();
@@ -181,12 +198,12 @@ namespace System.Windows.Controls
                 List<ValidationAttribute> validations = new List<ValidationAttribute>((ValidationAttribute[])property.GetCustomAttributes(typeof(ValidationAttribute), true));
 
                 if (propDisplay == null)
-                    propDisplay = new DisplayAttribute() {AutoGenerateField = true, Name = property.Name, ShortName = property.Name, Order = 10000, Prompt = null, GroupName = null, Description = null };
+                    propDisplay = new DisplayAttribute() { AutoGenerateField = true, Name = property.Name, ShortName = property.Name, Order = 10000, Prompt = null, GroupName = null, Description = null };
                 if (propEditable == null)
                     propEditable = new EditableAttribute(!this.DefaultReadOnly) { AllowInitialValue = true };
 
                 bool setPrivate = true;
-                if (property.GetSetMethod(true)!=null)
+                if (property.GetSetMethod(true) != null)
                     setPrivate = !property.GetSetMethod(true).IsPublic;
 
                 if (propDisplay.GetAutoGenerateField().HasValue && !propDisplay.AutoGenerateField)
@@ -226,88 +243,96 @@ namespace System.Windows.Controls
 
         public void InvalidateForm()
         {
-            this.Layout.Children.Clear();
-            this.DiscoverObject();
-
-            Grid grid1 = new Grid();
-            grid1.Margin = new Thickness(5);
-            grid1.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            grid1.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
-
-            int row = 0;
-
-            var listProperties = from p in this.displays orderby (p.Value.GetOrder() ?? 0) select this.properties[p.Key];
-
-            foreach (PropertyInfo property in listProperties)
+            if (partGrid != null)
             {
-                TextBlock lbl = new TextBlock();
-                lbl.Text = String.Format("{0} {1}",  displays[property.Name].GetName(), this.m_labelSeparator);
-                lbl.ToolTip = displays[property.Name].GetDescription();
-                lbl.TextAlignment = TextAlignment.Right;
-                lbl.Margin = new Thickness(5, 0, 5, 0);
-                lbl.HorizontalAlignment = HorizontalAlignment.Stretch;
-                lbl.VerticalAlignment = VerticalAlignment.Center;
+                partGrid.Children.Clear();
+                this.DiscoverObject();
 
-                // Binding Creation
-                Binding binding = new Binding(property.Name);
-                binding.Source = this.CurrentItem;
-                binding.Mode = (bindables[property.Name].Direction == BindingDirection.TwoWay ? BindingMode.TwoWay : BindingMode.OneWay);
-                binding.ValidatesOnDataErrors = true;
-                binding.ValidatesOnExceptions = true;
-                binding.NotifyOnValidationError = true;
-                binding.NotifyOnTargetUpdated = true;
-                binding.NotifyOnSourceUpdated = true;
-                binding.IsAsync = true;
+                Grid grid1 = new Grid();
+                grid1.Margin = new Thickness(5);
+                grid1.ColumnDefinitions.Add(new ColumnDefinition() {Width = new GridLength(1, GridUnitType.Star)});
+                grid1.ColumnDefinitions.Add(new ColumnDefinition() {Width = new GridLength(2, GridUnitType.Star)});
 
-                foreach (ValidationAttribute attribs in this.validations[property.Name])
+                int row = 0;
+
+                var listProperties = from p in this.displays
+                    orderby (p.Value.GetOrder() ?? 0)
+                    select this.properties[p.Key];
+
+                foreach (PropertyInfo property in listProperties)
                 {
-                    ValidationRule rule = new AttributeValidationRule(attribs, property.Name);
-                    binding.ValidationRules.Add(rule);
-                    if (!this.rules.ContainsKey(property.Name))
-                        this.rules.Add(property.Name, new List<ValidationRule>());
-                    this.rules[property.Name].Add(rule);                    
+                    TextBlock lbl = new TextBlock();
+                    lbl.Text = String.Format("{0} {1}", displays[property.Name].GetName(), this.m_labelSeparator);
+                    lbl.ToolTip = displays[property.Name].GetDescription();
+                    lbl.TextAlignment = TextAlignment.Right;
+                    lbl.Margin = new Thickness(5, 0, 5, 0);
+                    lbl.HorizontalAlignment = HorizontalAlignment.Stretch;
+                    lbl.VerticalAlignment = VerticalAlignment.Center;
+
+                    // Binding Creation
+                    Binding binding = new Binding(property.Name);
+                    binding.Source = this.CurrentItem;
+                    binding.Mode = (bindables[property.Name].Direction == BindingDirection.TwoWay
+                        ? BindingMode.TwoWay
+                        : BindingMode.OneWay);
+                    binding.ValidatesOnDataErrors = true;
+                    binding.ValidatesOnExceptions = true;
+                    binding.NotifyOnValidationError = true;
+                    binding.NotifyOnTargetUpdated = true;
+                    binding.NotifyOnSourceUpdated = true;
+                    binding.IsAsync = true;
+
+                    foreach (ValidationAttribute attribs in this.validations[property.Name])
+                    {
+                        ValidationRule rule = new AttributeValidationRule(attribs, property.Name);
+                        binding.ValidationRules.Add(rule);
+                        if (!this.rules.ContainsKey(property.Name))
+                            this.rules.Add(property.Name, new List<ValidationRule>());
+                        this.rules[property.Name].Add(rule);
+                    }
+
+                    // Control creation
+                    Control editorControl = this.GetControlFromProperty(property, binding);
+
+                    if (editorControl == null)
+                        continue;
+
+                    var df = new DataField() {Content = editorControl, Label = lbl};
+
+                    DataFormAutoGeneratingFieldEventArgs e = new DataFormAutoGeneratingFieldEventArgs(property.Name,
+                        property.PropertyType, df);
+                    EventHandler<DataFormAutoGeneratingFieldEventArgs> eventHandler = this.AutoGeneratingField;
+                    if (eventHandler != null)
+                        eventHandler(this, e);
+
+                    if (e.Cancel)
+                        continue;
+
+                    df.Content.ToolTip = displays[property.Name].GetDescription();
+                    Validation.SetErrorTemplate(df.Content, ErrorTemplate);
+                    df.Content.HorizontalAlignment = Windows.HorizontalAlignment.Left;
+
+                    // Add to view
+                    RowDefinition newRow = new RowDefinition() {Height = new GridLength(28)};
+                    grid1.RowDefinitions.Add(newRow);
+                    if (df.Content.Height.CompareTo(Double.NaN) != 0)
+                    {
+                        newRow.Height = new GridLength(df.Content.Height);
+                    }
+                    Grid.SetColumn(df.Label, 0);
+                    Grid.SetRow(df.Label, row);
+                    Grid.SetColumn(df.Content, 1);
+                    Grid.SetRow(df.Content, row);
+
+                    grid1.Children.Add(df.Label);
+                    grid1.Children.Add(df.Content);
+                    this.controls.Add(property.Name, df.Content);
+
+                    row++;
                 }
 
-                // Control creation
-                Control editorControl = this.GetControlFromProperty(property, binding);
-
-                if (editorControl == null)
-                    continue;
-
-                var df = new DataField() { Content = editorControl, Label = lbl };
-
-                DataFormAutoGeneratingFieldEventArgs e = new DataFormAutoGeneratingFieldEventArgs(property.Name, property.PropertyType, df);
-                EventHandler<DataFormAutoGeneratingFieldEventArgs> eventHandler = this.AutoGeneratingField;
-                if (eventHandler != null)
-                    eventHandler(this, e);
-
-                if (e.Cancel)
-                    continue;
-
-                df.Content.ToolTip = displays[property.Name].GetDescription();
-                Validation.SetErrorTemplate(df.Content, errorTemplate);
-                df.Content.HorizontalAlignment = Windows.HorizontalAlignment.Left;
-                
-                // Add to view
-                RowDefinition newRow = new RowDefinition() { Height = new GridLength(28) };
-                grid1.RowDefinitions.Add(newRow);
-                if (df.Content.Height.CompareTo(Double.NaN) != 0)
-                {
-                    newRow.Height = new GridLength(df.Content.Height);
-                }
-                Grid.SetColumn(df.Label, 0);
-                Grid.SetRow(df.Label, row);
-                Grid.SetColumn(df.Content, 1);
-                Grid.SetRow(df.Content, row);
-
-                grid1.Children.Add(df.Label);
-                grid1.Children.Add(df.Content);
-                this.controls.Add(property.Name, df.Content);
-
-                row++;
+                partGrid.Children.Add(grid1);
             }
-
-            this.Layout.Children.Add(grid1);
         }
 
         #region Control Generators
@@ -368,7 +393,7 @@ namespace System.Windows.Controls
             return integerUpDown;
         }
 
-        private Control GenerateDecimalUpDown(PropertyInfo property, Binding binding) 
+        private Control GenerateDecimalUpDown(PropertyInfo property, Binding binding)
         {
             DecimalUpDown decimalUpDown = new DecimalUpDown() { Margin = new Thickness(0, 3, 18, 3) };
             decimalUpDown.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
@@ -402,16 +427,16 @@ namespace System.Windows.Controls
         }
         private Control GenerateMultiLineTextBox(PropertyInfo property, Binding binding, int? PreferredHeight)
         {
-            TextBox txtBox = new TextBox() { Margin = new Thickness(0, 3, 18, 3),  TextWrapping= TextWrapping.Wrap };
+            TextBox txtBox = new TextBox() { Margin = new Thickness(0, 3, 18, 3), TextWrapping = TextWrapping.Wrap };
             if (PreferredHeight != null)
             {
                 txtBox.Height = (int)PreferredHeight;
             }
-            else 
-            { 
+            else
+            {
                 txtBox.Height = 56;
             }
-               
+
             txtBox.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
 
             // Binding
@@ -430,7 +455,7 @@ namespace System.Windows.Controls
             if (attrs.Length == 1)
                 display = (InputTypeAttribute)attrs[0];
             else
-                display = new InputTypeAttribute() {  FormType= InputTypeAttribute.FormTypes.@default };
+                display = new InputTypeAttribute() { FormType = InputTypeAttribute.FormTypes.@default };
 
             Control control = null;
             if (display.FormType == InputTypeAttribute.FormTypes.@default)
@@ -476,7 +501,8 @@ namespace System.Windows.Controls
                     control = null;
                 }
             }
-            else {  // we direct the object
+            else
+            {  // we direct the object
                 switch (display.FormType)
                 {
                     case InputTypeAttribute.FormTypes.box:
@@ -497,9 +523,9 @@ namespace System.Windows.Controls
                     default:
                         break;
                 }
-            
+
             }
-            if (display.PreferredWidth != null && control != null) 
+            if (display.PreferredWidth != null && control != null)
             {
                 control.Width = (int)display.PreferredWidth;
             }
@@ -513,14 +539,14 @@ namespace System.Windows.Controls
             if (attrs.Length == 1)
                 display = (DisplayAttribute)attrs[0];
             else
-                display = new DisplayAttribute() { Name = prop.Name,  };
+                display = new DisplayAttribute() { Name = prop.Name, };
 
             TextBlock lbl = new TextBlock();
 
             string labelText = prop.Name;
-            
+
             lbl.Text = String.Format("{0} {1}", prop.Name, this.m_labelSeparator);
-                        
+
             lbl.TextAlignment = TextAlignment.Right;
             lbl.Margin = new Thickness(5, 0, 5, 0);
             lbl.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -550,7 +576,7 @@ namespace System.Windows.Controls
                 }
             }
 
-            return result ;
+            return result;
         }
 
         /// <summary>
