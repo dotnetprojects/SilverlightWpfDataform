@@ -9,6 +9,6 @@ namespace WPF.DataForm
     public class DataField
     {
         public FrameworkElement Content { get; set; }
-        public UIElement Label { get; set; }
+        public FrameworkElement Label { get; set; }
     }
 }

@@ -14,7 +14,9 @@ using System.Collections.ObjectModel;
 using System.Windows.Media;
 using WPF.DataForm;
 
+#if !SILVERLIGHT
 using Xceed.Wpf.Toolkit;
+#endif
 
 namespace System.Windows.Controls
 {
@@ -66,7 +68,7 @@ namespace System.Windows.Controls
 
         // Using a DependencyProperty as the backing store for CurrentItem.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CurrentItemProperty =
-            DependencyProperty.Register("CurrentItem", typeof(object), typeof(DataForm), new UIPropertyMetadata(null, new PropertyChangedCallback(CurrentItemValueChanged)));
+            DependencyProperty.Register("CurrentItem", typeof(object), typeof(DataForm), new PropertyMetadata(null, new PropertyChangedCallback(CurrentItemValueChanged)));
 
         private static void CurrentItemValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
@@ -99,7 +101,9 @@ namespace System.Windows.Controls
         private Dictionary<string, BindingExpressionBase> bindings = new Dictionary<string, BindingExpressionBase>();
         private Dictionary<string, DisplayAttribute> displays = new Dictionary<string, DisplayAttribute>();
         private Dictionary<string, List<ValidationAttribute>> validations = new Dictionary<string, List<ValidationAttribute>>();
+#if !SILVERLIGHT
         private Dictionary<string, List<ValidationRule>> rules = new Dictionary<string, List<ValidationRule>>();
+#endif
         private Dictionary<string, DependencyObject> controls = new Dictionary<string, DependencyObject>();
 
         private Grid partGrid;
@@ -112,7 +116,7 @@ namespace System.Windows.Controls
 
         // Using a DependencyProperty as the backing store for DefaultReadOnly.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DefaultReadOnlyProperty =
-            DependencyProperty.Register("DefaultReadOnly", typeof(bool), typeof(DataForm), new UIPropertyMetadata(false, OnDefaultReadOnlyChanged));
+            DependencyProperty.Register("DefaultReadOnly", typeof(bool), typeof(DataForm), new PropertyMetadata(false, OnDefaultReadOnlyChanged));
 
         private static void OnDefaultReadOnlyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -123,13 +127,19 @@ namespace System.Windows.Controls
             }
         }
 
+#if !SILVERLIGHT
         static DataForm()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(DataForm), new FrameworkPropertyMetadata(typeof(DataForm)));
         }
+#endif
 
         public DataForm()
-        { }
+        {
+#if SILVERLIGHT 
+            this.DefaultStyleKey = typeof(DataForm);           
+#endif
+        }
 
         public override void OnApplyTemplate()
         {
@@ -150,7 +160,9 @@ namespace System.Windows.Controls
             this.properties.Clear();
             this.bindables.Clear();
             this.bindings.Clear();
+#if !SILVERLIGHT
             this.rules.Clear();
+#endif
             this.controls.Clear();
             this.validations.Clear();
 
@@ -263,7 +275,7 @@ namespace System.Windows.Controls
                 {
                     TextBlock lbl = new TextBlock();
                     lbl.Text = String.Format("{0} {1}", displays[property.Name].GetName(), this.m_labelSeparator);
-                    lbl.ToolTip = displays[property.Name].GetDescription();
+                    ToolTipService.SetToolTip(lbl, displays[property.Name].GetDescription());                    
                     lbl.TextAlignment = TextAlignment.Right;
                     lbl.Margin = new Thickness(5, 0, 5, 0);
                     lbl.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -278,10 +290,14 @@ namespace System.Windows.Controls
                     binding.ValidatesOnDataErrors = true;
                     binding.ValidatesOnExceptions = true;
                     binding.NotifyOnValidationError = true;
+
+#if !SILVERLIGHT
                     binding.NotifyOnTargetUpdated = true;
                     binding.NotifyOnSourceUpdated = true;
                     binding.IsAsync = true;
+#endif
 
+#if !SILVERLIGHT
                     foreach (ValidationAttribute attribs in this.validations[property.Name])
                     {
                         ValidationRule rule = new AttributeValidationRule(attribs, property.Name);
@@ -290,6 +306,7 @@ namespace System.Windows.Controls
                             this.rules.Add(property.Name, new List<ValidationRule>());
                         this.rules[property.Name].Add(rule);
                     }
+#endif
 
                     // Control creation
                     Control editorControl = this.GetControlFromProperty(property, binding);
@@ -308,8 +325,10 @@ namespace System.Windows.Controls
                     if (e.Cancel)
                         continue;
 
-                    df.Content.ToolTip = displays[property.Name].GetDescription();
+                    ToolTipService.SetToolTip(df.Content, displays[property.Name].GetDescription());  
+#if !SILVERLIGHT
                     Validation.SetErrorTemplate(df.Content, ErrorTemplate);
+#endif
                     df.Content.HorizontalAlignment = Windows.HorizontalAlignment.Left;
 
                     // Add to view
@@ -365,7 +384,11 @@ namespace System.Windows.Controls
 
             ComboBox comboBox = new ComboBox() { Margin = new Thickness(0, 2, 18, 2) };
             comboBox.ItemsSource = Enum.GetValues(property.PropertyType);
+#if !SILVERLIGHT
             comboBox.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
+#else
+            comboBox.IsEnabled = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
+#endif
             this.bindings.Add(property.Name, comboBox.SetBinding(ComboBox.SelectedItemProperty, binding));
 
             return comboBox;
@@ -373,56 +396,87 @@ namespace System.Windows.Controls
 
         private Control GenerateWaterMarkedTextBox(PropertyInfo property, Binding binding)
         {
+#if !SILVERLIGHT
             WatermarkTextBox txtBox = new WatermarkTextBox() { Margin = new Thickness(0, 3, 18, 3), Watermark = displays[property.Name].GetPrompt() };
             txtBox.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
 
             // Binding
             this.bindings.Add(property.Name, txtBox.SetBinding(TextBox.TextProperty, binding));
+#else
+            TextBox txtBox = new TextBox() { Margin = new Thickness(0, 3, 18, 3) };
+            txtBox.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
 
+            // Binding
+            this.bindings.Add(property.Name, txtBox.SetBinding(TextBox.TextProperty, binding));
+#endif
             return txtBox;
         }
 
         private Control GenerateIntegerUpDow(PropertyInfo property, Binding binding)
         {
+#if !SILVERLIGHT
             IntegerUpDown integerUpDown = new IntegerUpDown() { Margin = new Thickness(0, 3, 18, 3) };
             integerUpDown.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
 
             // Binding
             this.bindings.Add(property.Name, integerUpDown.SetBinding(IntegerUpDown.ValueProperty, binding));
+#else
+            NumericUpDown integerUpDown = new NumericUpDown() { Margin = new Thickness(0, 3, 18, 3) };
+            integerUpDown.IsEditable = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
 
+            // Binding
+            this.bindings.Add(property.Name, integerUpDown.SetBinding(NumericUpDown.ValueProperty, binding));
+#endif
             return integerUpDown;
         }
 
         private Control GenerateDecimalUpDown(PropertyInfo property, Binding binding)
         {
+#if !SILVERLIGHT
             DecimalUpDown decimalUpDown = new DecimalUpDown() { Margin = new Thickness(0, 3, 18, 3) };
             decimalUpDown.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
 
             // Binding
             this.bindings.Add(property.Name, decimalUpDown.SetBinding(DecimalUpDown.ValueProperty, binding));
+#else
+            NumericUpDown decimalUpDown = new NumericUpDown() { Margin = new Thickness(0, 3, 18, 3) };
+            decimalUpDown.IsEditable = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
 
+            // Binding
+            this.bindings.Add(property.Name, decimalUpDown.SetBinding(NumericUpDown.ValueProperty, binding));
+#endif
             return decimalUpDown;
         }
 
         private Control GenerateCalculator(PropertyInfo property, Binding binding)
         {
+#if !SILVERLIGHT
             CalculatorUpDown calculatorUpDown = new CalculatorUpDown() { Margin = new Thickness(0, 3, 18, 3) };
             calculatorUpDown.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
 
             // Binding
             this.bindings.Add(property.Name, calculatorUpDown.SetBinding(CalculatorUpDown.ValueProperty, binding));
+#else
+            NumericUpDown calculatorUpDown = new NumericUpDown() { Margin = new Thickness(0, 3, 18, 3) };
+            calculatorUpDown.IsEditable = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
 
+            // Binding
+            this.bindings.Add(property.Name, calculatorUpDown.SetBinding(NumericUpDown.ValueProperty, binding));
+#endif
             return calculatorUpDown;
         }
 
         private Control GenerateColorPicker(PropertyInfo property, Binding binding)
         {
+#if !SILVERLIGHT
             ColorPicker colorPicker = new ColorPicker() { Margin = new Thickness(0, 3, 18, 3) };
             colorPicker.IsEnabled = (bindables[property.Name].Direction == BindingDirection.TwoWay);
 
             // Binding
             this.bindings.Add(property.Name, colorPicker.SetBinding(ColorPicker.SelectedColorProperty, binding));
-
+#else
+            Control colorPicker = null;
+#endif
             return colorPicker;
         }
         private Control GenerateMultiLineTextBox(PropertyInfo property, Binding binding, int? PreferredHeight)
@@ -555,6 +609,7 @@ namespace System.Windows.Controls
             return lbl;
         }
 
+#if !SILVERLIGHT
         /// <summary>
         /// 
         /// </summary>
@@ -578,6 +633,7 @@ namespace System.Windows.Controls
 
             return result;
         }
+#endif
 
         /// <summary>
         /// 

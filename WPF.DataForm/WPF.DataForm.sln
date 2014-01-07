@@ -1,9 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPF.DataForm", "WPF.DataForm\WPF.DataForm.csproj", "{24CF6F7C-89E8-44A4-8741-D827DCFE5DFD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "Demo\Demo.csproj", "{ACBB15E1-CFB8-41B3-878A-AB5CD2CADD73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SL.DataForm", "SL.DataForm\SL.DataForm.csproj", "{52A48F56-D0D0-47A4-A0CC-74D397DDB7F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.SL", "Demo.SL\Demo.SL.csproj", "{9F7E7605-F3D6-4563-8F49-F712DC88517B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,6 +25,14 @@ Global
 		{ACBB15E1-CFB8-41B3-878A-AB5CD2CADD73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ACBB15E1-CFB8-41B3-878A-AB5CD2CADD73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ACBB15E1-CFB8-41B3-878A-AB5CD2CADD73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52A48F56-D0D0-47A4-A0CC-74D397DDB7F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52A48F56-D0D0-47A4-A0CC-74D397DDB7F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52A48F56-D0D0-47A4-A0CC-74D397DDB7F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52A48F56-D0D0-47A4-A0CC-74D397DDB7F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F7E7605-F3D6-4563-8F49-F712DC88517B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F7E7605-F3D6-4563-8F49-F712DC88517B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F7E7605-F3D6-4563-8F49-F712DC88517B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F7E7605-F3D6-4563-8F49-F712DC88517B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
