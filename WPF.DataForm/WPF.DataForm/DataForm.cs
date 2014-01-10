@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -98,7 +99,7 @@ namespace System.Windows.Controls
         #endregion
         private Dictionary<string, PropertyInfo> properties = new Dictionary<string, PropertyInfo>();
         private Dictionary<string, BindableAttribute> bindables = new Dictionary<string, BindableAttribute>();
-        private Dictionary<string, BindingExpressionBase> bindings = new Dictionary<string, BindingExpressionBase>();
+        protected Dictionary<string, BindingExpressionBase> bindings = new Dictionary<string, BindingExpressionBase>();
         private Dictionary<string, DisplayAttribute> displays = new Dictionary<string, DisplayAttribute>();
         private Dictionary<string, List<ValidationAttribute>> validations = new Dictionary<string, List<ValidationAttribute>>();
 #if !SILVERLIGHT
@@ -154,6 +155,11 @@ namespace System.Windows.Controls
             this.InvalidateForm();
         }
 
+        protected virtual PropertyInfo[] GetPropertyInfos(Type type)
+        {
+            return type.GetProperties();
+        }
+
         private void DiscoverObject()
         {
             this.displays.Clear();
@@ -188,7 +194,7 @@ namespace System.Windows.Controls
             }
             else*/
             {
-                properties = dataType.GetProperties();
+                properties = GetPropertyInfos(dataType);
             }
 
             BindableAttribute bindable = ((BindableAttribute[])dataType.GetCustomAttributes(typeof(System.ComponentModel.BindableAttribute), true)).FirstOrDefault();
@@ -205,9 +211,10 @@ namespace System.Windows.Controls
                 if ((bindable != null && !bindable.Bindable && propBindable == null) || (bindable != null && !bindable.Bindable && propBindable != null && !propBindable.Bindable) || (propBindable != null && !propBindable.Bindable))
                     continue;
 
-                DisplayAttribute propDisplay = ((DisplayAttribute[])property.GetCustomAttributes(typeof(DisplayAttribute), false)).FirstOrDefault();
-                EditableAttribute propEditable = ((EditableAttribute[])property.GetCustomAttributes(typeof(EditableAttribute), false)).FirstOrDefault();
-                List<ValidationAttribute> validations = new List<ValidationAttribute>((ValidationAttribute[])property.GetCustomAttributes(typeof(ValidationAttribute), true));
+                
+                DisplayAttribute propDisplay = ((DisplayAttribute[])Attribute.GetCustomAttributes(property, typeof(DisplayAttribute), true)).FirstOrDefault();
+                EditableAttribute propEditable = ((EditableAttribute[])Attribute.GetCustomAttributes(property, typeof(EditableAttribute), true)).FirstOrDefault();
+                List<ValidationAttribute> validations = new List<ValidationAttribute>((ValidationAttribute[])Attribute.GetCustomAttributes(property, typeof(ValidationAttribute), true));
 
                 if (propDisplay == null)
                     propDisplay = new DisplayAttribute() { AutoGenerateField = true, Name = property.Name, ShortName = property.Name, Order = 10000, Prompt = null, GroupName = null, Description = null };
@@ -253,6 +260,19 @@ namespace System.Windows.Controls
             }
         }
 
+        protected virtual FrameworkElement GetLabelTextBlock(string name, string toolTip)
+        {
+            TextBlock lbl = new TextBlock();
+            
+            lbl.Text = String.Format("{0} {1}", name, this.m_labelSeparator);
+            ToolTipService.SetToolTip(lbl, toolTip);
+            lbl.TextAlignment = TextAlignment.Right;
+            lbl.Margin = new Thickness(5, 0, 5, 0);
+            lbl.HorizontalAlignment = HorizontalAlignment.Stretch;
+            lbl.VerticalAlignment = VerticalAlignment.Center;
+
+            return lbl;
+        }
         public void InvalidateForm()
         {
             if (partGrid != null)
@@ -273,14 +293,13 @@ namespace System.Windows.Controls
 
                 foreach (PropertyInfo property in listProperties)
                 {
-                    TextBlock lbl = new TextBlock();
-                    lbl.Text = String.Format("{0} {1}", displays[property.Name].GetName(), this.m_labelSeparator);
-                    ToolTipService.SetToolTip(lbl, displays[property.Name].GetDescription());                    
-                    lbl.TextAlignment = TextAlignment.Right;
-                    lbl.Margin = new Thickness(5, 0, 5, 0);
-                    lbl.HorizontalAlignment = HorizontalAlignment.Stretch;
-                    lbl.VerticalAlignment = VerticalAlignment.Center;
+                    var nm = displays[property.Name].GetName();
+                    if (string.IsNullOrEmpty(nm))
+                        nm = property.Name;
+                    var tooltip = displays[property.Name].GetDescription();
 
+                    var lbl = GetLabelTextBlock(nm, tooltip);
+                    
                     // Binding Creation
                     Binding binding = new Binding(property.Name);
                     binding.Source = this.CurrentItem;
@@ -292,9 +311,9 @@ namespace System.Windows.Controls
                     binding.NotifyOnValidationError = true;
 
 #if !SILVERLIGHT
-                    binding.NotifyOnTargetUpdated = true;
-                    binding.NotifyOnSourceUpdated = true;
-                    binding.IsAsync = true;
+                    //binding.NotifyOnTargetUpdated = true;
+                    //binding.NotifyOnSourceUpdated = true;
+                    //binding.IsAsync = true;
 #endif
 
 #if !SILVERLIGHT
