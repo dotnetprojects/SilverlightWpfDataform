@@ -10,7 +10,7 @@
 
     <Grid>
         <toolkit:DockPanel>
-            <controls:DataForm x:Name="dataForm1" DefaultReadOnly="False" />
+            <controls:WPFDataForm x:Name="dataForm1" DefaultReadOnly="False" />
         </toolkit:DockPanel>
     </Grid>
 </UserControl>

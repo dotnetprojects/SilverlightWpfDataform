@@ -12,11 +12,11 @@
         </DockPanel>
     </ControlTemplate>
 
-    <Style TargetType="controls:DataForm">
+    <Style TargetType="controls:WPFDataForm">
         <Setter Property="ErrorTemplate" Value="{StaticResource errorTemplate}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="controls:DataForm">
+                <ControlTemplate TargetType="controls:WPFDataForm">
                     <Grid x:Name="PART_Grid" />
                 </ControlTemplate>
             </Setter.Value>

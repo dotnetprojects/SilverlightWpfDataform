@@ -20,13 +20,13 @@ using Xceed.Wpf.Toolkit;
 
 namespace System.Windows.Controls
 {
-    public class DataForm : Control, INotifyPropertyChanged
+    public class WPFDataForm : Control, INotifyPropertyChanged
     {
         #region INotifyPropertyChanged Membres
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void FirePropertyChanged<TProp>(Expression<Func<DataForm, TProp>> propertySelector)
+        private void FirePropertyChanged<TProp>(Expression<Func<WPFDataForm, TProp>> propertySelector)
         {
             if (this.PropertyChanged == null)
             {
@@ -55,7 +55,7 @@ namespace System.Windows.Controls
         }
 
         public static readonly DependencyProperty ErrorTemplateProperty =
-            DependencyProperty.Register("ErrorTemplate", typeof(ControlTemplate), typeof(DataForm), new PropertyMetadata(null));
+            DependencyProperty.Register("ErrorTemplate", typeof(ControlTemplate), typeof(WPFDataForm), new PropertyMetadata(null));
 
         
 
@@ -68,11 +68,11 @@ namespace System.Windows.Controls
 
         // Using a DependencyProperty as the backing store for CurrentItem.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CurrentItemProperty =
-            DependencyProperty.Register("CurrentItem", typeof(object), typeof(DataForm), new PropertyMetadata(null, new PropertyChangedCallback(CurrentItemValueChanged)));
+            DependencyProperty.Register("CurrentItem", typeof(object), typeof(WPFDataForm), new PropertyMetadata(null, new PropertyChangedCallback(CurrentItemValueChanged)));
 
         private static void CurrentItemValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            DataForm df = sender as DataForm;
+            WPFDataForm df = sender as WPFDataForm;
             if (df != null)
                 df.CurrentItemChanged();
         }
@@ -116,11 +116,11 @@ namespace System.Windows.Controls
 
         // Using a DependencyProperty as the backing store for DefaultReadOnly.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DefaultReadOnlyProperty =
-            DependencyProperty.Register("DefaultReadOnly", typeof(bool), typeof(DataForm), new PropertyMetadata(false, OnDefaultReadOnlyChanged));
+            DependencyProperty.Register("DefaultReadOnly", typeof(bool), typeof(WPFDataForm), new PropertyMetadata(false, OnDefaultReadOnlyChanged));
 
         private static void OnDefaultReadOnlyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            DataForm df = d as DataForm;
+            WPFDataForm df = d as WPFDataForm;
             if (df != null)
             {
                 df.DiscoverObject();
@@ -128,16 +128,16 @@ namespace System.Windows.Controls
         }
 
 #if !SILVERLIGHT
-        static DataForm()
+        static WPFDataForm()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(DataForm), new FrameworkPropertyMetadata(typeof(DataForm)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(WPFDataForm), new FrameworkPropertyMetadata(typeof(WPFDataForm)));
         }
 #endif
 
-        public DataForm()
+        public WPFDataForm()
         {
 #if SILVERLIGHT 
-            this.DefaultStyleKey = typeof(DataForm);           
+            this.DefaultStyleKey = typeof(WPFDataForm);           
 #endif
         }
 

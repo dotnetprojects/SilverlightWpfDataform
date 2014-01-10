@@ -6,7 +6,7 @@
     <Grid>
         <DockPanel>
             <Button Click="Button_Click" DockPanel.Dock="Top">Sauvegarder</Button>
-            <dataForm:DataForm x:Name="dataForm1" DefaultReadOnly="False" />
+            <dataForm:WPFDataForm x:Name="dataForm1" DefaultReadOnly="False" />
         </DockPanel>
     </Grid>
 </Window>
