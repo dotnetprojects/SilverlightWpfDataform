@@ -501,7 +501,7 @@ namespace System.Windows.Controls
 
         #endregion
 
-        private Control GetControlFromProperty(PropertyInfo property, Binding binding)
+        protected virtual Control GetControlFromProperty(PropertyInfo property, Binding binding)
         {
             // check attribute on this property to determine if we use defaults
             object[] attrs = property.GetCustomAttributes(typeof(InputTypeAttribute), false);
