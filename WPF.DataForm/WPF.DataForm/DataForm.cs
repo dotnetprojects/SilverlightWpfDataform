@@ -282,8 +282,8 @@ namespace System.Windows.Controls
 
                 Grid grid1 = new Grid();
                 grid1.Margin = new Thickness(5);
-                grid1.ColumnDefinitions.Add(new ColumnDefinition() {Width = new GridLength(1, GridUnitType.Star)});
-                grid1.ColumnDefinitions.Add(new ColumnDefinition() {Width = new GridLength(2, GridUnitType.Star)});
+                grid1.ColumnDefinitions.Add(new ColumnDefinition() {Width = new GridLength(1, GridUnitType.Auto)});
+                grid1.ColumnDefinitions.Add(new ColumnDefinition() {Width = new GridLength(1, GridUnitType.Auto)});
 
                 int row = 0;
 
@@ -348,7 +348,7 @@ namespace System.Windows.Controls
 #if !SILVERLIGHT
                     Validation.SetErrorTemplate(df.Content, ErrorTemplate);
 #endif
-                    df.Content.HorizontalAlignment = Windows.HorizontalAlignment.Left;
+                    //df.Content.HorizontalAlignment = Windows.HorizontalAlignment.Stretch;
 
                     // Add to view
                     RowDefinition newRow = new RowDefinition() {Height = new GridLength(28)};
@@ -598,6 +598,8 @@ namespace System.Windows.Controls
                 }
 
             }
+            if (control != null)
+                control.HorizontalAlignment = Windows.HorizontalAlignment.Stretch;
             if (display.PreferredWidth != null && control != null)
             {
                 control.Width = (int)display.PreferredWidth;
