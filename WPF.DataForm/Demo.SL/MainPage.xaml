@@ -8,7 +8,7 @@
     mc:Ignorable="d"
     d:DesignHeight="300" d:DesignWidth="400">
 
-    <Grid>
+    <Grid Background="Green">
         <toolkit:DockPanel>
             <controls:WPFDataForm x:Name="dataForm1" DefaultReadOnly="False" />
         </toolkit:DockPanel>

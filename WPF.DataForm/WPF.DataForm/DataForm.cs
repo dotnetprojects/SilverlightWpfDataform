@@ -282,8 +282,8 @@ namespace System.Windows.Controls
 
                 Grid grid1 = new Grid();
                 grid1.Margin = new Thickness(5);
-                grid1.ColumnDefinitions.Add(new ColumnDefinition() {Width = new GridLength(1, GridUnitType.Auto)});
-                grid1.ColumnDefinitions.Add(new ColumnDefinition() {Width = new GridLength(1, GridUnitType.Auto)});
+                grid1.ColumnDefinitions.Add(new ColumnDefinition(){Width = new GridLength(1, GridUnitType.Auto)});
+                grid1.ColumnDefinitions.Add(new ColumnDefinition());// {Width = new GridLength(1, GridUnitType.Auto)});
 
                 int row = 0;
 
@@ -328,7 +328,7 @@ namespace System.Windows.Controls
 #endif
 
                     // Control creation
-                    Control editorControl = this.GetControlFromProperty(property, binding);
+                    FrameworkElement editorControl = this.GetControlFromProperty(property, binding);
 
                     if (editorControl == null)
                         continue;
@@ -431,7 +431,7 @@ namespace System.Windows.Controls
             return txtBox;
         }
 
-        private Control GenerateIntegerUpDow(PropertyInfo property, Binding binding)
+        private FrameworkElement GenerateIntegerUpDow(PropertyInfo property, Binding binding)
         {
 #if !SILVERLIGHT
             IntegerUpDown integerUpDown = new IntegerUpDown() { Margin = new Thickness(0, 3, 18, 3) };
@@ -440,16 +440,18 @@ namespace System.Windows.Controls
             // Binding
             this.bindings.Add(property.Name, integerUpDown.SetBinding(IntegerUpDown.ValueProperty, binding));
 #else
-            NumericUpDown integerUpDown = new NumericUpDown() { Margin = new Thickness(0, 3, 18, 3) };
-            integerUpDown.IsEditable = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
+            Border integerUpDown = new Border() { Opacity = 1.0, Background = new SolidColorBrush(Colors.White), Margin = new Thickness(0, 3, 18, 3) };
+            NumericUpDown n = new NumericUpDown() { };
+            integerUpDown.Child = n;
+            n.IsEditable = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
 
             // Binding
-            this.bindings.Add(property.Name, integerUpDown.SetBinding(NumericUpDown.ValueProperty, binding));
+            this.bindings.Add(property.Name, n.SetBinding(NumericUpDown.ValueProperty, binding));
 #endif
             return integerUpDown;
         }
 
-        private Control GenerateDecimalUpDown(PropertyInfo property, Binding binding)
+        private FrameworkElement GenerateDecimalUpDown(PropertyInfo property, Binding binding)
         {
 #if !SILVERLIGHT
             DecimalUpDown decimalUpDown = new DecimalUpDown() { Margin = new Thickness(0, 3, 18, 3) };
@@ -458,16 +460,18 @@ namespace System.Windows.Controls
             // Binding
             this.bindings.Add(property.Name, decimalUpDown.SetBinding(DecimalUpDown.ValueProperty, binding));
 #else
-            NumericUpDown decimalUpDown = new NumericUpDown() { Margin = new Thickness(0, 3, 18, 3) };
-            decimalUpDown.IsEditable = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
+            Border decimalUpDown = new Border() { Opacity = 1.0, Background = new SolidColorBrush(Colors.White), Margin = new Thickness(0, 3, 18, 3) };
+            NumericUpDown n = new NumericUpDown() { };
+            decimalUpDown.Child = n;
+            n.IsEditable = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
 
             // Binding
-            this.bindings.Add(property.Name, decimalUpDown.SetBinding(NumericUpDown.ValueProperty, binding));
+            this.bindings.Add(property.Name, n.SetBinding(NumericUpDown.ValueProperty, binding));
 #endif
             return decimalUpDown;
         }
 
-        private Control GenerateCalculator(PropertyInfo property, Binding binding)
+        private FrameworkElement GenerateCalculator(PropertyInfo property, Binding binding)
         {
 #if !SILVERLIGHT
             CalculatorUpDown calculatorUpDown = new CalculatorUpDown() { Margin = new Thickness(0, 3, 18, 3) };
@@ -476,11 +480,13 @@ namespace System.Windows.Controls
             // Binding
             this.bindings.Add(property.Name, calculatorUpDown.SetBinding(CalculatorUpDown.ValueProperty, binding));
 #else
-            NumericUpDown calculatorUpDown = new NumericUpDown() { Margin = new Thickness(0, 3, 18, 3) };
-            calculatorUpDown.IsEditable = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
+            Border calculatorUpDown = new Border() { Opacity = 1.0, Background = new SolidColorBrush(Colors.White), Margin = new Thickness(0, 3, 18, 3) };
+            NumericUpDown n = new NumericUpDown() { };
+            calculatorUpDown.Child = n;
+            n.IsEditable = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
 
             // Binding
-            this.bindings.Add(property.Name, calculatorUpDown.SetBinding(NumericUpDown.ValueProperty, binding));
+            this.bindings.Add(property.Name, n.SetBinding(NumericUpDown.ValueProperty, binding));
 #endif
             return calculatorUpDown;
         }
@@ -520,7 +526,7 @@ namespace System.Windows.Controls
 
         #endregion
 
-        protected virtual Control GetControlFromProperty(PropertyInfo property, Binding binding)
+        protected virtual FrameworkElement GetControlFromProperty(PropertyInfo property, Binding binding)
         {
             // check attribute on this property to determine if we use defaults
             object[] attrs = property.GetCustomAttributes(typeof(InputTypeAttribute), false);
@@ -530,7 +536,7 @@ namespace System.Windows.Controls
             else
                 display = new InputTypeAttribute() { FormType = InputTypeAttribute.FormTypes.@default };
 
-            Control control = null;
+            FrameworkElement control = null;
             if (display.FormType == InputTypeAttribute.FormTypes.@default)
             {
                 if (property.PropertyType == typeof(bool))
