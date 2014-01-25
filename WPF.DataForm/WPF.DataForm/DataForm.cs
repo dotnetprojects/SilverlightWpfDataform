@@ -406,7 +406,7 @@ namespace System.Windows.Controls
 #if !SILVERLIGHT
             comboBox.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
 #else
-            comboBox.IsEnabled = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
+            comboBox.IsEnabled = (bindables[property.Name].Direction == BindingDirection.TwoWay);
 #endif
             this.bindings.Add(property.Name, comboBox.SetBinding(ComboBox.SelectedItemProperty, binding));
 
