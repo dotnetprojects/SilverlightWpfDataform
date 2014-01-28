@@ -351,7 +351,7 @@ namespace System.Windows.Controls
                     //df.Content.HorizontalAlignment = Windows.HorizontalAlignment.Stretch;
 
                     // Add to view
-                    RowDefinition newRow = new RowDefinition() {Height = new GridLength(28)};
+                    RowDefinition newRow = new RowDefinition() {Height = new GridLength(1, GridUnitType.Auto)};
                     grid1.RowDefinitions.Add(newRow);
                     if (df.Content.Height.CompareTo(Double.NaN) != 0)
                     {
@@ -443,6 +443,17 @@ namespace System.Windows.Controls
             IntegerUpDown integerUpDown = new IntegerUpDown() { Margin = new Thickness(0, 3, 18, 3) };
             integerUpDown.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
 
+            if (property.PropertyType == typeof (Int32) || property.PropertyType == typeof (Int32?))
+            {
+                integerUpDown.Maximum = Int32.MaxValue;
+                integerUpDown.Minimum = Int32.MinValue;
+            }
+            else if (property.PropertyType == typeof(UInt32) || property.PropertyType == typeof(UInt32?))
+            {
+                integerUpDown.Maximum = Int32.MaxValue;
+                integerUpDown.Minimum = 0;
+            }
+                        
             // Binding
             this.bindings.Add(property.Name, integerUpDown.SetBinding(IntegerUpDown.ValueProperty, binding));
 #else
@@ -451,9 +462,104 @@ namespace System.Windows.Controls
             integerUpDown.Child = n;
             n.IsEditable = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
 
+            if (property.PropertyType == typeof (Int32) || property.PropertyType == typeof (Int32?))
+            {
+                n.Maximum = Int32.MaxValue;
+                n.Minimum = Int32.MinValue;
+            }
+            else if (property.PropertyType == typeof(UInt32) || property.PropertyType == typeof(UInt32?))
+            {
+                n.Maximum = UInt32.MaxValue;
+                n.Minimum = UInt32.MinValue;
+            }
+
             // Binding
             this.bindings.Add(property.Name, n.SetBinding(NumericUpDown.ValueProperty, binding));
 #endif
+            return integerUpDown;
+        }
+
+        private FrameworkElement GenerateShortUpDow(PropertyInfo property, Binding binding)
+        {
+#if !SILVERLIGHT
+            IntegerUpDown integerUpDown = new IntegerUpDown() { Margin = new Thickness(0, 3, 18, 3) };
+            integerUpDown.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
+
+            if (property.PropertyType == typeof (Int16) || property.PropertyType == typeof (Int16?))
+            {
+                integerUpDown.Maximum = Int16.MaxValue;
+                integerUpDown.Minimum = Int16.MinValue;
+            }
+            else if (property.PropertyType == typeof(UInt16) || property.PropertyType == typeof(UInt16?))
+            {
+                integerUpDown.Maximum = Int16.MaxValue;
+                integerUpDown.Minimum = 0;
+            }
+                        
+            // Binding
+            this.bindings.Add(property.Name, integerUpDown.SetBinding(IntegerUpDown.ValueProperty, binding));
+#else
+            Border integerUpDown = new Border() { Opacity = 1.0, Background = new SolidColorBrush(Colors.White), Margin = new Thickness(0, 3, 18, 3) };
+            NumericUpDown n = new NumericUpDown() { };
+            integerUpDown.Child = n;
+            n.IsEditable = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
+
+            if (property.PropertyType == typeof(Int16) || property.PropertyType == typeof(Int16?))
+            {
+                n.Maximum = Int16.MaxValue;
+                n.Minimum = Int16.MinValue;
+            }
+            else if (property.PropertyType == typeof(UInt16) || property.PropertyType == typeof(UInt16?))
+            {
+                n.Maximum = UInt16.MaxValue;
+                n.Minimum = UInt16.MinValue;
+            }
+
+            // Binding
+            this.bindings.Add(property.Name, n.SetBinding(NumericUpDown.ValueProperty, binding));
+#endif
+            return integerUpDown;
+        }
+
+        private FrameworkElement GenerateLongUpDown(PropertyInfo property, Binding binding)
+        {
+#if !SILVERLIGHT
+            LongUpDown integerUpDown = new LongUpDown() { Margin = new Thickness(0, 3, 18, 3) };
+            integerUpDown.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
+
+            if (property.PropertyType == typeof(Int64) || property.PropertyType == typeof(Int64?))
+            {
+                integerUpDown.Maximum = Int64.MaxValue;
+                integerUpDown.Minimum = Int64.MinValue;
+            }
+            else if (property.PropertyType == typeof(UInt64) || property.PropertyType == typeof(UInt64?))
+            {
+                integerUpDown.Maximum = Int64.MaxValue;
+                integerUpDown.Minimum = 0;
+            }
+            // Binding
+            this.bindings.Add(property.Name, integerUpDown.SetBinding(IntegerUpDown.ValueProperty, binding));
+#else
+            Border integerUpDown = new Border() { Opacity = 1.0, Background = new SolidColorBrush(Colors.White), Margin = new Thickness(0, 3, 18, 3) };
+            NumericUpDown n = new NumericUpDown() { };
+            integerUpDown.Child = n;
+            n.IsEditable = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
+
+            if (property.PropertyType == typeof(Int64) || property.PropertyType == typeof(Int64?))
+            {
+                n.Maximum = Int64.MaxValue;
+                n.Minimum = Int64.MinValue;
+            }
+            else if (property.PropertyType == typeof(UInt64) || property.PropertyType == typeof(UInt64?))
+            {
+                n.Maximum = UInt64.MaxValue;
+                n.Minimum = UInt64.MinValue;
+            }
+
+            // Binding
+            this.bindings.Add(property.Name, n.SetBinding(NumericUpDown.ValueProperty, binding));
+#endif
+
             return integerUpDown;
         }
 
@@ -564,10 +670,22 @@ namespace System.Windows.Controls
                 else if (property.PropertyType == typeof(string))
                 {
                     control = GenerateWaterMarkedTextBox(property, binding);
-                }
-                else if (property.PropertyType == typeof(Int32) || property.PropertyType == typeof(UInt32) || property.PropertyType == typeof(Int16) || property.PropertyType == typeof(UInt16) || property.PropertyType == typeof(Int64) || property.PropertyType == typeof(UInt64) || property.PropertyType == typeof(byte) || property.PropertyType == typeof(sbyte))
+                }                 
+                else if (property.PropertyType == typeof(byte) || property.PropertyType == typeof(sbyte))  
                 {
                     control = GenerateIntegerUpDow(property, binding);
+                }
+                else if (property.PropertyType == typeof(Int32) || property.PropertyType == typeof(UInt32))                    
+                {
+                    control = GenerateIntegerUpDow(property, binding);
+                }
+                else if (property.PropertyType == typeof(Int16) || property.PropertyType == typeof(UInt16))                  
+                {
+                    control = GenerateShortUpDow(property, binding);
+                }
+                else if (property.PropertyType == typeof(Int64) || property.PropertyType == typeof(UInt64))
+                {
+                    control = GenerateLongUpDown(property, binding);
                 }
                 else if (property.PropertyType == typeof(Decimal))
                 {
