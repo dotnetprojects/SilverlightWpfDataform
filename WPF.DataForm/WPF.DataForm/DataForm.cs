@@ -670,28 +670,28 @@ namespace System.Windows.Controls
                 else if (property.PropertyType == typeof(string))
                 {
                     control = GenerateWaterMarkedTextBox(property, binding);
-                }                 
-                else if (property.PropertyType == typeof(byte) || property.PropertyType == typeof(sbyte))  
+                }
+                else if (property.PropertyType == typeof(byte) || property.PropertyType == typeof(sbyte) || property.PropertyType == typeof(byte?) || property.PropertyType == typeof(sbyte?))  
                 {
                     control = GenerateIntegerUpDow(property, binding);
                 }
-                else if (property.PropertyType == typeof(Int32) || property.PropertyType == typeof(UInt32))                    
+                else if (property.PropertyType == typeof(Int32) || property.PropertyType == typeof(UInt32) || property.PropertyType == typeof(Int32?) || property.PropertyType == typeof(UInt32?))                    
                 {
                     control = GenerateIntegerUpDow(property, binding);
                 }
-                else if (property.PropertyType == typeof(Int16) || property.PropertyType == typeof(UInt16))                  
+                else if (property.PropertyType == typeof(Int16) || property.PropertyType == typeof(UInt16) || property.PropertyType == typeof(Int16?) || property.PropertyType == typeof(UInt16?))                  
                 {
                     control = GenerateShortUpDow(property, binding);
                 }
-                else if (property.PropertyType == typeof(Int64) || property.PropertyType == typeof(UInt64))
+                else if (property.PropertyType == typeof(Int64) || property.PropertyType == typeof(UInt64) || property.PropertyType == typeof(Int64?) || property.PropertyType == typeof(UInt64?))
                 {
                     control = GenerateLongUpDown(property, binding);
                 }
-                else if (property.PropertyType == typeof(Decimal))
+                else if (property.PropertyType == typeof(Decimal) || property.PropertyType == typeof(Decimal?))
                 {
                     control = GenerateDecimalUpDown(property, binding);
                 }
-                else if (property.PropertyType == typeof(Single) || property.PropertyType == typeof(Double))
+                else if (property.PropertyType == typeof(Single) || property.PropertyType == typeof(Double) || property.PropertyType == typeof(Single?) || property.PropertyType == typeof(Double?))
                 {
                     control = GenerateCalculator(property, binding);
                 }
