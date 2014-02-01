@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Dynamic;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Markup;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
 using WPF.DataForm;
@@ -68,7 +63,6 @@ namespace System.Windows.Controls
             set { SetValue(CurrentItemProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for CurrentItem.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CurrentItemProperty =
             DependencyProperty.Register("CurrentItem", typeof(object), typeof(WPFDataForm), new PropertyMetadata(null, new PropertyChangedCallback(CurrentItemValueChanged)));
 
@@ -379,14 +373,14 @@ namespace System.Windows.Controls
 
         private Control GenerateCheckBox(PropertyInfo property, Binding binding)
         {
-            CheckBox checkBox = new CheckBox() { VerticalAlignment = VerticalAlignment.Center };
+            CheckBox checkBox = new CheckBox() {VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(2)};
             checkBox.IsEnabled = (bindables[property.Name].Direction == BindingDirection.TwoWay);
             this.bindings.Add(property.Name, checkBox.SetBinding(CheckBox.IsCheckedProperty, binding));
             return checkBox;
         }
         private Control GenerateThreeStateCheckBox(PropertyInfo property, Binding binding)
         {
-            CheckBox checkBox = new CheckBox() { VerticalAlignment = VerticalAlignment.Center };
+            CheckBox checkBox = new CheckBox() {VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(2)};
             checkBox.IsThreeState = true;
             checkBox.IsEnabled = (bindables[property.Name].Direction == BindingDirection.TwoWay);
             this.bindings.Add(property.Name, checkBox.SetBinding(CheckBox.IsCheckedProperty, binding));
