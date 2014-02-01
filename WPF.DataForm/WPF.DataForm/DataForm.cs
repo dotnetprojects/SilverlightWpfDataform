@@ -373,14 +373,14 @@ namespace System.Windows.Controls
 
         private Control GenerateCheckBox(PropertyInfo property, Binding binding)
         {
-            CheckBox checkBox = new CheckBox() {VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(2)};
+            CheckBox checkBox = new CheckBox() { VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(2, 4, 0, 4) };
             checkBox.IsEnabled = (bindables[property.Name].Direction == BindingDirection.TwoWay);
             this.bindings.Add(property.Name, checkBox.SetBinding(CheckBox.IsCheckedProperty, binding));
             return checkBox;
         }
         private Control GenerateThreeStateCheckBox(PropertyInfo property, Binding binding)
         {
-            CheckBox checkBox = new CheckBox() {VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(2)};
+            CheckBox checkBox = new CheckBox() { VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(2, 4, 0, 4) };
             checkBox.IsThreeState = true;
             checkBox.IsEnabled = (bindables[property.Name].Direction == BindingDirection.TwoWay);
             this.bindings.Add(property.Name, checkBox.SetBinding(CheckBox.IsCheckedProperty, binding));
