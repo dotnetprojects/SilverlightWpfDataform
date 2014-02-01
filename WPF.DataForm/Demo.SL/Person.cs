@@ -15,13 +15,14 @@ namespace Demo
         #region INotifyPropertyChanged Membres
 
         public event PropertyChangedEventHandler PropertyChanged;
-        
+
         /// <summary>
         /// Raises the PropertyChanged event if needed.
         /// </summary>
         /// <param name="propertyName">The name of the property that changed.</param>
         protected virtual void OnPropertyChanged(string propertyName)
         {
+           
             PropertyChangedEventHandler handler = this.PropertyChanged;
             if (handler != null)
             {
@@ -36,8 +37,10 @@ namespace Demo
         private string lastname;
         private string comments;
         private DateTime dateOfBirth;
+        private double? _weight2;
+        private int? _weight3;
 
-        [Display(Name="Name", Order=2, Prompt="Lastname")]
+        [Display(Name = "Name", Order = 2, Prompt = "Lastname")]
         [Required]
         public string Lastname
         {
@@ -47,7 +50,8 @@ namespace Demo
 
         [Display(Name = "Date of Birth")]
         [Required]
-        public DateTime DateOfBirth {
+        public DateTime DateOfBirth
+        {
             get { return dateOfBirth; }
             set
             {
@@ -80,12 +84,36 @@ namespace Demo
 
         public double Weight { get; set; }
 
+        public double? Weight2
+        {
+            get { return _weight2; }
+            set
+            {
+                _weight2 = value;
+                this.OnPropertyChanged("Weight2");
+            }
+        }
+
+        public int? Weight3
+        {
+            get { return _weight3; }
+            set
+            {
+                _weight3 = value;
+                this.OnPropertyChanged("Weight3");
+            }
+        }
+
+        public DateTime? DateTimeField { get; set; }
+
         [InputType()]
         public System.Windows.Media.Color FaceColor { get; set; }
 
         public bool? Is_Admin { get; set; }
 
         public Gender Gender { get; set; }
+
+        public Gender? Gender2 { get; set; }
 
         public static int CalculateAge(DateTime birthDate)
         {

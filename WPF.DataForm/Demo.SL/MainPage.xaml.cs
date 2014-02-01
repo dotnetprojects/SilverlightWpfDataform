@@ -17,7 +17,7 @@ namespace Demo.SL
         public MainPage()
         {
             InitializeComponent();
-            this.dataForm1.CurrentItem = new Person() { Gender = Gender.Male, DateOfBirth = new DateTime(1988, 2, 14), Is_Admin = true };
+            this.dataForm1.CurrentItem = new Person() { Gender = Gender.Male, DateOfBirth = new DateTime(1988, 2, 14), Is_Admin = true, Weight2 = 88, Weight3 = null};
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Demo
         public MainWindow()
         {
             InitializeComponent();
-            this.dataForm1.CurrentItem = new Person() { Gender = Gender.Male, DateOfBirth = new DateTime(1988, 2, 14), Is_Admin = true };
+            this.dataForm1.CurrentItem = new Person() { Gender = Gender.Male, DateOfBirth = new DateTime(1988, 2, 14), Is_Admin = true, DateTimeField = DateTime.Now, Weight2 = 88, Weight3 = null };
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

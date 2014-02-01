@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Dynamic;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -303,6 +304,7 @@ namespace System.Windows.Controls
                     // Binding Creation
                     Binding binding = new Binding(property.Name);
                     binding.Source = this.CurrentItem;
+                    binding.ConverterCulture = CultureInfo.CurrentCulture;
                     binding.Mode = (bindables[property.Name].Direction == BindingDirection.TwoWay
                         ? BindingMode.TwoWay
                         : BindingMode.OneWay);
@@ -394,8 +396,8 @@ namespace System.Windows.Controls
         private Control GenerateDatePicker(PropertyInfo property, Binding binding)
         {
 #if !SILVERLIGHT
-            DatePicker control = new DatePicker() { Margin = new Thickness(0, 2, 22, 2) };
-            this.bindings.Add(property.Name, control.SetBinding(DatePicker.SelectedDateProperty, binding));
+            DateTimePicker control = new DateTimePicker() { Margin = new Thickness(0, 2, 22, 2) };
+            this.bindings.Add(property.Name, control.SetBinding(DateTimePicker.ValueProperty, binding));
 #else
             DateTimePicker control = new DateTimePicker() { Margin = new Thickness(0, 2, 22, 2) };
             this.bindings.Add(property.Name, control.SetBinding(DateTimePicker.SelectedDateTimeProperty, binding));
@@ -404,11 +406,11 @@ namespace System.Windows.Controls
             return control;
         }
 
-        private Control GenerateComboBox(PropertyInfo property, Binding binding)
+        private Control GenerateComboBox(Type t, PropertyInfo property, Binding binding)
         {
 
             ComboBox comboBox = new ComboBox() { Margin = new Thickness(0, 2, 18, 2) };
-            comboBox.ItemsSource = Enum.GetValues(property.PropertyType);
+            comboBox.ItemsSource = Enum.GetValues(t);
 #if !SILVERLIGHT
             comboBox.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
 #else
@@ -424,13 +426,13 @@ namespace System.Windows.Controls
 #if !SILVERLIGHT
             WatermarkTextBox txtBox = new WatermarkTextBox() { Margin = new Thickness(0, 3, 18, 3), Watermark = displays[property.Name].GetPrompt() };
             txtBox.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
-
+            txtBox.TextAlignment = TextAlignment.Right;
             // Binding
             this.bindings.Add(property.Name, txtBox.SetBinding(TextBox.TextProperty, binding));
 #else
             TextBox txtBox = new TextBox() { Margin = new Thickness(0, 3, 18, 3) };
             txtBox.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
-
+            txtBox.TextAlignment = TextAlignment.Right;
             // Binding
             this.bindings.Add(property.Name, txtBox.SetBinding(TextBox.TextProperty, binding));
 #endif
@@ -655,53 +657,80 @@ namespace System.Windows.Controls
                 {
                     control = GenerateCheckBox(property, binding);
                 }
-                else if (property.PropertyType == typeof(bool?))
+                else if (property.PropertyType == typeof (bool?))
                 {
                     control = GenerateThreeStateCheckBox(property, binding);
                 }
-                else if (property.PropertyType == typeof(DateTime) || property.PropertyType == typeof(DateTime?))
-                {
-                    control = GenerateDatePicker(property, binding);
-                }
-                else if (property.PropertyType.IsEnum)
-                {
-                    control = GenerateComboBox(property, binding);
-                }
-                else if (property.PropertyType == typeof(string))
-                {
-                    control = GenerateWaterMarkedTextBox(property, binding);
-                }
-                else if (property.PropertyType == typeof(byte) || property.PropertyType == typeof(sbyte) || property.PropertyType == typeof(byte?) || property.PropertyType == typeof(sbyte?))  
-                {
-                    control = GenerateIntegerUpDow(property, binding);
-                }
-                else if (property.PropertyType == typeof(Int32) || property.PropertyType == typeof(UInt32) || property.PropertyType == typeof(Int32?) || property.PropertyType == typeof(UInt32?))                    
-                {
-                    control = GenerateIntegerUpDow(property, binding);
-                }
-                else if (property.PropertyType == typeof(Int16) || property.PropertyType == typeof(UInt16) || property.PropertyType == typeof(Int16?) || property.PropertyType == typeof(UInt16?))                  
-                {
-                    control = GenerateShortUpDow(property, binding);
-                }
-                else if (property.PropertyType == typeof(Int64) || property.PropertyType == typeof(UInt64) || property.PropertyType == typeof(Int64?) || property.PropertyType == typeof(UInt64?))
-                {
-                    control = GenerateLongUpDown(property, binding);
-                }
-                else if (property.PropertyType == typeof(Decimal) || property.PropertyType == typeof(Decimal?))
-                {
-                    control = GenerateDecimalUpDown(property, binding);
-                }
-                else if (property.PropertyType == typeof(Single) || property.PropertyType == typeof(Double) || property.PropertyType == typeof(Single?) || property.PropertyType == typeof(Double?))
-                {
-                    control = GenerateCalculator(property, binding);
-                }
-                else if (property.PropertyType == typeof(Color))
-                {
-                    control = GenerateColorPicker(property, binding);
-                }
                 else
                 {
-                    control = null;
+
+                    NullableContentWrapper wrp = null;
+                    var type = property.PropertyType;
+                    var b = binding;
+                    var tp = Nullable.GetUnderlyingType(property.PropertyType);
+                    if (tp != null || type == typeof(string))
+                    {
+                        wrp = new NullableContentWrapper();
+                        tp = tp ?? typeof(string);
+                        type = tp;
+                        wrp.ObjectType = type;
+                        
+                        wrp.SetBinding(NullableContentWrapper.ObjectValueProperty, b);
+                        b = new Binding("Value") { Mode = BindingMode.TwoWay, Source = wrp, ConverterCulture = CultureInfo.CurrentCulture};                        
+                    }
+
+                    if (type == typeof (DateTime))
+                    {
+                        control = GenerateDatePicker(property, b);
+                    }
+                    else if (type.IsEnum)
+                    {
+                        control = GenerateComboBox(type, property, b);
+                    }
+                    else if (type == typeof (string))
+                    {
+                        control = GenerateWaterMarkedTextBox(property, b);
+                    }
+                    else if (type == typeof (byte) || type == typeof (sbyte))
+                    {
+                        control = GenerateIntegerUpDow(property, b);
+                    }
+                    else if (type == typeof (Int32) || type == typeof (UInt32))
+                    {
+                        control = GenerateIntegerUpDow(property, b);
+                    }
+                    else if (type == typeof (Int16) || type == typeof (UInt16))
+                    {
+                        control = GenerateShortUpDow(property, b);
+                    }
+                    else if (type == typeof (Int64) || type == typeof (UInt64))
+                    {
+                        control = GenerateLongUpDown(property, b);
+                    }
+                    else if (type == typeof (Decimal))
+                    {
+                        control = GenerateDecimalUpDown(property, b);
+                    }
+                    else if (type == typeof (Single) || type == typeof (Double))
+                    {
+                        control = GenerateCalculator(property, b);
+                    }
+                    else if (type == typeof (Color))
+                    {
+                        control = GenerateColorPicker(property, b);
+                    }
+                    else
+                    {
+                        control = null;
+                    }
+
+                    if (tp != null)
+                    {
+                        wrp.contentCtl.Content = control;
+                        control = wrp;
+
+                        wrp.nullCheck.IsEnabled = (bindables[property.Name].Direction == BindingDirection.TwoWay);
+                    }
                 }
             }
             else

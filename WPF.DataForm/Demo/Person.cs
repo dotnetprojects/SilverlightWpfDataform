@@ -94,6 +94,12 @@ namespace Demo
 
         public double Weight { get; set; }
 
+        public double? Weight2 { get; set; }
+
+        public int? Weight3 { get; set; }
+
+        public DateTime? DateTimeField { get; set; }
+
         [InputType()]
         public System.Windows.Media.Color FaceColor { get; set; }
 

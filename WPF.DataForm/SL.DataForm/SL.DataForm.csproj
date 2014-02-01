@@ -77,6 +77,9 @@
     <Compile Include="..\WPF.DataForm\InputTypeAttribute.cs">
       <Link>InputTypeAttribute.cs</Link>
     </Compile>
+    <Compile Include="..\WPF.DataForm\NullableContentWrapper.xaml.cs">
+      <Link>NullableContentWrapper.xaml.cs</Link>
+    </Compile>
     <Compile Include="DateTimePicker.xaml.cs">
       <DependentUpon>DateTimePicker.xaml</DependentUpon>
     </Compile>
@@ -88,6 +91,11 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="..\WPF.DataForm\NullableContentWrapper.xaml">
+      <Link>NullableContentWrapper.xaml</Link>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="DateTimePicker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
