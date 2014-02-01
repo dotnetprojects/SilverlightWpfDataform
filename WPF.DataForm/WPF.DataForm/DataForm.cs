@@ -398,6 +398,7 @@ namespace System.Windows.Controls
 #if !SILVERLIGHT
             DateTimePicker control = new DateTimePicker() { Margin = new Thickness(0, 2, 18, 2) };
             this.bindings.Add(property.Name, control.SetBinding(DateTimePicker.ValueProperty, binding));
+            control.TextAlignment = TextAlignment.Right;
 #else
             DateTimePicker control = new DateTimePicker() { Margin = new Thickness(0, 2, 18, 2) };
             this.bindings.Add(property.Name, control.SetBinding(DateTimePicker.SelectedDateTimeProperty, binding));
