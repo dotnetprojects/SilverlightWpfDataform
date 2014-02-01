@@ -396,10 +396,10 @@ namespace System.Windows.Controls
         private Control GenerateDatePicker(PropertyInfo property, Binding binding)
         {
 #if !SILVERLIGHT
-            DateTimePicker control = new DateTimePicker() { Margin = new Thickness(0, 2, 22, 2) };
+            DateTimePicker control = new DateTimePicker() { Margin = new Thickness(0, 2, 18, 2) };
             this.bindings.Add(property.Name, control.SetBinding(DateTimePicker.ValueProperty, binding));
 #else
-            DateTimePicker control = new DateTimePicker() { Margin = new Thickness(0, 2, 22, 2) };
+            DateTimePicker control = new DateTimePicker() { Margin = new Thickness(0, 2, 18, 2) };
             this.bindings.Add(property.Name, control.SetBinding(DateTimePicker.SelectedDateTimeProperty, binding));
 #endif
 
