@@ -24,12 +24,12 @@ namespace WPF.DataForm
             var ctl = d as NullableContentWrapper;
             if (e.NewValue == null)
             {
-                ctl.nullCheck.IsChecked = true;
+                ctl.nullCheck.IsChecked = null;
             }
             else
             {
                 ctl.oldValue = e.NewValue;
-                ctl.nullCheck.IsChecked = false;
+                ctl.nullCheck.IsChecked = true;
                 ctl.ObjectValue = e.NewValue;
             }
 
@@ -49,12 +49,12 @@ namespace WPF.DataForm
             var ctl = d as NullableContentWrapper;
             if (e.NewValue == null)
             {
-                ctl.nullCheck.IsChecked = true;
+                ctl.nullCheck.IsChecked = null;
             }
             else
             {
                 ctl.oldValue = e.NewValue;
-                ctl.nullCheck.IsChecked = false;
+                ctl.nullCheck.IsChecked = true;
                 ctl.Value = e.NewValue;
                 //ctl.GetBindingExpression(ValueProperty).UpdateSource();
             }
@@ -77,20 +77,25 @@ namespace WPF.DataForm
 
         private void nullCheck_Checked(object sender, RoutedEventArgs e)
         {
-            if (ObjectValue != null)
+            if (oldValue != null)
             {
-                oldValue = Value;
-                ObjectValue = null;
-                Value = null;               
+                ObjectValue = oldValue;
+                Value = oldValue;
             }
         }
 
         private void nullCheck_Unchecked(object sender, RoutedEventArgs e)
         {
-            if (oldValue != null)
-            {                
-                ObjectValue = oldValue;
-                Value = oldValue;
+            nullCheck.IsChecked = true;
+        }
+
+        private void nullCheck_Indeterminate(object sender, RoutedEventArgs e)
+        {
+            if (ObjectValue != null)
+            {
+                oldValue = Value;
+                ObjectValue = null;
+                Value = null;
             }
         }
     }
