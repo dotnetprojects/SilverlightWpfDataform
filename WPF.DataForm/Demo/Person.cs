@@ -5,7 +5,7 @@ using System.Text;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 using System.Diagnostics;
-
+using System.Windows.Media;
 using WPF.DataForm;
 
 namespace Demo
@@ -120,6 +120,12 @@ namespace Demo
 
             return years;
         }
+
+        public Color Color { get; set; }
+
+        public Brush Brush { get; set; }
+
+        public Guid Guid { get; set; }
     }
 
     public enum Gender

@@ -10,10 +10,12 @@ using System.Windows.Documents;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
 using WPF.DataForm;
-
 #if !SILVERLIGHT
 using Xceed.Wpf.Toolkit;
+#else
+using WPF.DataForm.ColorPicker;
 #endif
+
 
 namespace System.Windows.Controls
 {
@@ -609,7 +611,11 @@ namespace System.Windows.Controls
             // Binding
             this.bindings.Add(property.Name, colorPicker.SetBinding(ColorPicker.SelectedColorProperty, binding));
 #else
-            Control colorPicker = null;
+            ColorPicker colorPicker = new ColorPicker() { Margin = new Thickness(0, 3, 18, 3) };
+            colorPicker.IsEnabled = (bindables[property.Name].Direction == BindingDirection.TwoWay);
+
+            // Binding
+            this.bindings.Add(property.Name, colorPicker.SetBinding(ColorPicker.ColorProperty, binding));
 #endif
             return colorPicker;
         }

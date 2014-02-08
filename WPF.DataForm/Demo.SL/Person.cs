@@ -5,7 +5,7 @@ using System.Text;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 using System.Diagnostics;
-
+using System.Windows.Media;
 using WPF.DataForm;
 
 namespace Demo
@@ -39,6 +39,7 @@ namespace Demo
         private DateTime dateOfBirth;
         private double? _weight2;
         private int? _weight3;
+
 
         [Display(Name = "Name", Order = 2, Prompt = "Lastname")]
         [Required]
@@ -128,6 +129,12 @@ namespace Demo
 
             return years;
         }
+
+        public Color Color { get; set; }
+
+        public Brush Brush { get; set; }
+
+        public Guid Guid { get; set; }
     }
 
     public enum Gender
