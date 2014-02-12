@@ -459,7 +459,7 @@ namespace System.Windows.Controls
             Border integerUpDown = new Border() { Opacity = 1.0, Background = new SolidColorBrush(Colors.White), Margin = new Thickness(0, 3, 18, 3) };
             NumericUpDown n = new NumericUpDown() { };
             integerUpDown.Child = n;
-            n.IsEditable = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
+            n.IsEnabled = (bindables[property.Name].Direction == BindingDirection.TwoWay);
 
             if (property.PropertyType == typeof (Int32) || property.PropertyType == typeof (Int32?))
             {
@@ -501,7 +501,7 @@ namespace System.Windows.Controls
             Border integerUpDown = new Border() { Opacity = 1.0, Background = new SolidColorBrush(Colors.White), Margin = new Thickness(0, 3, 18, 3) };
             NumericUpDown n = new NumericUpDown() { };
             integerUpDown.Child = n;
-            n.IsEditable = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
+            n.IsEnabled = (bindables[property.Name].Direction == BindingDirection.TwoWay);
 
             if (property.PropertyType == typeof(Int16) || property.PropertyType == typeof(Int16?))
             {
@@ -542,7 +542,7 @@ namespace System.Windows.Controls
             Border integerUpDown = new Border() { Opacity = 1.0, Background = new SolidColorBrush(Colors.White), Margin = new Thickness(0, 3, 18, 3) };
             NumericUpDown n = new NumericUpDown() { };
             integerUpDown.Child = n;
-            n.IsEditable = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
+            n.IsEnabled = (bindables[property.Name].Direction == BindingDirection.TwoWay);
 
             if (property.PropertyType == typeof(Int64) || property.PropertyType == typeof(Int64?))
             {
@@ -574,7 +574,7 @@ namespace System.Windows.Controls
             Border decimalUpDown = new Border() { Opacity = 1.0, Background = new SolidColorBrush(Colors.White), Margin = new Thickness(0, 3, 18, 3) };
             NumericUpDown n = new NumericUpDown() { };
             decimalUpDown.Child = n;
-            n.IsEditable = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
+            n.IsEnabled = (bindables[property.Name].Direction == BindingDirection.TwoWay);
 
             // Binding
             this.bindings.Add(property.Name, n.SetBinding(NumericUpDown.ValueProperty, binding));
@@ -594,7 +594,7 @@ namespace System.Windows.Controls
             Border calculatorUpDown = new Border() { Opacity = 1.0, Background = new SolidColorBrush(Colors.White), Margin = new Thickness(0, 3, 18, 3) };
             NumericUpDown n = new NumericUpDown() { };
             calculatorUpDown.Child = n;
-            n.IsEditable = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
+            n.IsEnabled = (bindables[property.Name].Direction == BindingDirection.TwoWay);
 
             // Binding
             this.bindings.Add(property.Name, n.SetBinding(NumericUpDown.ValueProperty, binding));
