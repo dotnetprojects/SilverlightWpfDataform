@@ -279,8 +279,9 @@ namespace System.Windows.Controls
 
                 Grid grid1 = new Grid();
                 grid1.Margin = new Thickness(5);
-                grid1.ColumnDefinitions.Add(new ColumnDefinition(){Width = new GridLength(1, GridUnitType.Auto)});
+                grid1.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
                 grid1.ColumnDefinitions.Add(new ColumnDefinition());// {Width = new GridLength(1, GridUnitType.Auto)});
+                //grid1.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
 
                 int row = 0;
 
