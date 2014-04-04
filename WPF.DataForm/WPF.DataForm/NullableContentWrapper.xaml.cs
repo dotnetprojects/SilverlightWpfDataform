@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media.Animation;
 
@@ -8,6 +9,16 @@ namespace WPF.DataForm
 {
     public partial class NullableContentWrapper
     {
+        public ContentControl ContentControl
+        {
+            get { return this.contentCtl; }
+        }
+
+        public CheckBox NullCheck
+        {
+            get { return this.nullCheck; }
+        }
+
         public object Value
         {
             get { return (object)GetValue(ValueProperty); }
@@ -41,6 +52,7 @@ namespace WPF.DataForm
             set { SetValue(ObjectValueProperty, value); }
         }
 
+       
         public static readonly DependencyProperty ObjectValueProperty =
             DependencyProperty.Register("ObjectValue", typeof(object), typeof(NullableContentWrapper), new PropertyMetadata(OnObjectValueChanged));
 
