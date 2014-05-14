@@ -473,6 +473,7 @@ namespace System.Windows.Controls
                 n.Minimum = UInt32.MinValue;
             }
 
+
             // Binding
             this.bindings.Add(property.Name, n.SetBinding(NumericUpDown.ValueProperty, binding));
 #endif
@@ -567,7 +568,7 @@ namespace System.Windows.Controls
         {
 #if !SILVERLIGHT
             DecimalUpDown decimalUpDown = new DecimalUpDown() { Margin = new Thickness(0, 3, 18, 3) };
-            decimalUpDown.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
+            decimalUpDown.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);           
 
             // Binding
             this.bindings.Add(property.Name, decimalUpDown.SetBinding(DecimalUpDown.ValueProperty, binding));
@@ -576,6 +577,10 @@ namespace System.Windows.Controls
             NumericUpDown n = new NumericUpDown() { };
             decimalUpDown.Child = n;
             n.IsEnabled = (bindables[property.Name].Direction == BindingDirection.TwoWay);
+
+            n.Maximum = double.MaxValue;
+            n.Minimum = double.MinValue;
+            
 
             // Binding
             this.bindings.Add(property.Name, n.SetBinding(NumericUpDown.ValueProperty, binding));
