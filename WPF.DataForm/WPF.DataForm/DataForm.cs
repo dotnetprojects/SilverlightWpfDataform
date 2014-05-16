@@ -578,8 +578,8 @@ namespace System.Windows.Controls
             decimalUpDown.Child = n;
             n.IsEnabled = (bindables[property.Name].Direction == BindingDirection.TwoWay);
 
-            n.Maximum = double.MaxValue;
-            n.Minimum = double.MinValue;
+            n.Maximum = Convert.ToDouble(Decimal.MaxValue);
+            n.Minimum = Convert.ToDouble(Decimal.MinValue);
             
 
             // Binding
