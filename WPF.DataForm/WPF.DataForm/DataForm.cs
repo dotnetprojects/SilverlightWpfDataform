@@ -45,8 +45,6 @@ namespace System.Windows.Controls
         }
         #endregion
 
-
-
         public ControlTemplate ErrorTemplate
         {
             get { return (ControlTemplate)GetValue(ErrorTemplateProperty); }
@@ -55,9 +53,7 @@ namespace System.Windows.Controls
 
         public static readonly DependencyProperty ErrorTemplateProperty =
             DependencyProperty.Register("ErrorTemplate", typeof(ControlTemplate), typeof(WPFDataForm), new PropertyMetadata(null));
-
         
-
         #region CurrentItem
         public object CurrentItem
         {
@@ -104,6 +100,8 @@ namespace System.Windows.Controls
 #endif
         private Dictionary<string, DependencyObject> controls = new Dictionary<string, DependencyObject>();
 
+        public List<PropertyDisplayInfo> PropertyDisplayInformations { get; set; }
+
         private Grid partGrid;
 
         public bool DefaultReadOnly
@@ -145,6 +143,7 @@ namespace System.Windows.Controls
 
             InvalidateForm();
         }
+
 
 
         private void CurrentItemChanged()
@@ -224,6 +223,15 @@ namespace System.Windows.Controls
 
                 if (propDisplay.GetAutoGenerateField().HasValue && !propDisplay.AutoGenerateField)
                     continue;
+
+                if (PropertyDisplayInformations != null)
+                {
+                    var prpDisplay = PropertyDisplayInformations.FirstOrDefault(x => x.Name == property.Name);
+                    if (prpDisplay==null || !prpDisplay.Visible)
+                        continue;
+                    propDisplay.Order = prpDisplay.Order;
+                }
+
 
                 if (bindable != null && propBindable == null)
                 {

@@ -80,6 +80,9 @@
     <Compile Include="..\WPF.DataForm\NullableContentWrapper.xaml.cs">
       <Link>NullableContentWrapper.xaml.cs</Link>
     </Compile>
+    <Compile Include="..\WPF.DataForm\PropertyDisplayInfo.cs">
+      <Link>PropertyDisplayInfo.cs</Link>
+    </Compile>
     <Compile Include="ColorPicker\ColorBoard.cs" />
     <Compile Include="ColorPicker\ColorHelper.cs" />
     <Compile Include="ColorPicker\ColorPicker.cs" />
