@@ -696,6 +696,7 @@ namespace System.Windows.Controls
 
                     if (type == typeof (DateTime))
                     {
+                        b.Converter = WPF.DataForm.DateTimeUtcConverter.Instance.Value;
                         control = GenerateDatePicker(property, b);
                     }
                     else if (type == typeof(DateTimeOffset))

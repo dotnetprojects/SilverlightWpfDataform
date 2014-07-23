@@ -77,6 +77,9 @@
     <Compile Include="..\WPF.DataForm\DateTimeOffsetConverter.cs">
       <Link>DateTimeOffsetConverter.cs</Link>
     </Compile>
+    <Compile Include="..\WPF.DataForm\DateTimeUtcConverter.cs">
+      <Link>DateTimeUtcConverter.cs</Link>
+    </Compile>
     <Compile Include="..\WPF.DataForm\InputTypeAttribute.cs">
       <Link>InputTypeAttribute.cs</Link>
     </Compile>

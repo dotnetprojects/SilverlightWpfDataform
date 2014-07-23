@@ -8,22 +8,30 @@ using System.Windows.Data;
 
 namespace WPF.DataForm
 {
-    public class DateTimeOffsetConverter : IValueConverter
+    public class DateTimeUtcConverter : IValueConverter
     {
-        public static Lazy<DateTimeOffsetConverter> Instance = new Lazy<DateTimeOffsetConverter>();
+        public static Lazy<DateTimeUtcConverter> Instance = new Lazy<DateTimeUtcConverter>();
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
                 return null;
-            return ((DateTimeOffset) value).LocalDateTime;
+
+            var dt = (DateTime) value;
+            if (dt.Kind == DateTimeKind.Unspecified)
+                dt = DateTime.SpecifyKind(dt, DateTimeKind.Utc);
+            return dt.ToLocalTime();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
                 return null;
-            return new DateTimeOffset((DateTime)value);
+
+            var dt = (DateTime)value;
+            if (dt.Kind == DateTimeKind.Unspecified)
+                dt = DateTime.SpecifyKind(dt, DateTimeKind.Local);
+            return dt.ToUniversalTime();
         }
     }
 }
