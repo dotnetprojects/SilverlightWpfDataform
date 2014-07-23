@@ -37,6 +37,7 @@ namespace Demo
         private string lastname;
         private string comments;
         private DateTime dateOfBirth;
+        private DateTimeOffset dateTest = DateTimeOffset.Now;
         private double? _weight2;
         private int? _weight3;
 
@@ -67,6 +68,22 @@ namespace Demo
             }
         }
 
+        [Display(Name = "DateTimeOffset Test")]
+        [Required]
+        public DateTimeOffset DateTest
+        {
+            get { return dateTest; }
+            set
+            {
+                if (dateTest.Equals(value))
+                    return;
+
+                dateTest = value;
+                
+                this.OnPropertyChanged("DateTest");                
+            }
+        }
+
         [Display(Name = "Age")]
         [Range(1, 100)]
         [Required]
@@ -84,6 +101,12 @@ namespace Demo
         }
 
         public double Weight { get; set; }
+
+        public string Test1 { get; set; }
+
+        public string Test2 { get; set; }
+
+        public string Test3 { get; set; }
 
         public double? Weight2
         {

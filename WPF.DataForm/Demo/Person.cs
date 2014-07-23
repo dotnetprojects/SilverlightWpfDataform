@@ -50,6 +50,7 @@ namespace Demo
         private string lastname;
         private string comments;
         private DateTime dateOfBirth;
+        private DateTimeOffset dateTest = DateTimeOffset.Now;
 
         [Display(Name="Name", Order=2, Prompt="Lastname")]
         [Required]
@@ -75,6 +76,23 @@ namespace Demo
                 this.OnPropertyChanged("Age");
             }
         }
+
+        [Display(Name = "DateTimeOffset Test")]
+        [Required]
+        public DateTimeOffset DateTest
+        {
+            get { return dateTest; }
+            set
+            {
+                if (dateTest.Equals(value))
+                    return;
+
+                dateTest = value;
+
+                this.OnPropertyChanged("DateTest");
+            }
+        }
+
 
         [Display(Name = "Age")]
         [Range(1, 100)]

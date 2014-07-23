@@ -52,6 +52,7 @@
     <Compile Include="DataField.cs" />
     <Compile Include="DataForm.cs" />
     <Compile Include="DataFormAutoGeneratingFieldEventArgs.cs" />
+    <Compile Include="DateTimeOffsetConverter.cs" />
     <Compile Include="InputTypeAttribute.cs" />
     <Compile Include="NullableContentWrapper.xaml.cs">
       <DependentUpon>NullableContentWrapper.xaml</DependentUpon>

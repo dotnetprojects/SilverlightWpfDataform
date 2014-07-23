@@ -74,6 +74,9 @@
     <Compile Include="..\WPF.DataForm\DataFormAutoGeneratingFieldEventArgs.cs">
       <Link>DataFormAutoGeneratingFieldEventArgs.cs</Link>
     </Compile>
+    <Compile Include="..\WPF.DataForm\DateTimeOffsetConverter.cs">
+      <Link>DateTimeOffsetConverter.cs</Link>
+    </Compile>
     <Compile Include="..\WPF.DataForm\InputTypeAttribute.cs">
       <Link>InputTypeAttribute.cs</Link>
     </Compile>

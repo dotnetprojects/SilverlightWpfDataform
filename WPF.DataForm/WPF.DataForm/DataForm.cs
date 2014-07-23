@@ -698,6 +698,11 @@ namespace System.Windows.Controls
                     {
                         control = GenerateDatePicker(property, b);
                     }
+                    else if (type == typeof(DateTimeOffset))
+                    {
+                        b.Converter = WPF.DataForm.DateTimeOffsetConverter.Instance.Value;
+                        control = GenerateDatePicker(property, b);
+                    }
                     else if (type.IsEnum)
                     {
                         control = GenerateComboBox(type, property, b);
