@@ -19,61 +19,64 @@ namespace WPF.DataForm
             InitializeComponent();
         }
 
-        public DateTime SelectedDateTime
+        public DateTime? Value
         {
-            get { return (DateTime)GetValue(SelectedDateTimeProperty); }
-            set { SetValue(SelectedDateTimeProperty, value); }
+            get { return (DateTime?)GetValue(ValueProperty); }
+            set { SetValue(ValueProperty, value); }
         }
 
-        public static readonly DependencyProperty SelectedDateTimeProperty =
-            DependencyProperty.Register("SelectedDateTime", typeof(DateTime), typeof(DateTimePicker),
+        public static readonly DependencyProperty ValueProperty =
+            DependencyProperty.Register("Value", typeof(DateTime?), typeof(DateTimePicker),
                                         new PropertyMetadata(SelectedDateTime_PropertyChanged));
 
         private static void SelectedDateTime_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as DateTimePicker;
-            control.SelectedDate = (DateTime)e.NewValue;
-            control.SelectedTime = (DateTime)e.NewValue;
+            control.SelectedDate = (DateTime?)e.NewValue;
+            control.SelectedTime = (DateTime?)e.NewValue;
         }
 
-        private DateTime SelectedDate
+        private DateTime? SelectedDate
         {
-            get { return (DateTime)GetValue(SelectedDateProperty); }
+            get { return (DateTime?)GetValue(SelectedDateProperty); }
             set { SetValue(SelectedDateProperty, value); }
         }
-        private DateTime SelectedTime
+        private DateTime? SelectedTime
         {
-            get { return (DateTime)GetValue(SelectedTimeProperty); }
+            get { return (DateTime?)GetValue(SelectedTimeProperty); }
             set { SetValue(SelectedTimeProperty, value); }
         }
 
         private static readonly DependencyProperty SelectedDateProperty =
-            DependencyProperty.Register("SelectedDate", typeof(DateTime), typeof(DateTimePicker),
+            DependencyProperty.Register("SelectedDate", typeof(DateTime?), typeof(DateTimePicker),
                                         new PropertyMetadata(SelectedDate_PropertyChanged));
         private static readonly DependencyProperty SelectedTimeProperty =
-            DependencyProperty.Register("SelectedTime", typeof(DateTime), typeof(DateTimePicker),
+            DependencyProperty.Register("SelectedTime", typeof(DateTime?), typeof(DateTimePicker),
                                         new PropertyMetadata(SelectedTime_PropertyChanged));
 
         private static void SelectedDate_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            DateTime newDate = (e.NewValue as DateTime?) ?? DateTime.MinValue;
-            DateTime oldDate = (DateTime)d.GetValue(SelectedDateTimeProperty);
+            var newDate = e.NewValue as DateTime?;
+            var oldDate = d.GetValue(ValueProperty) as DateTime?;
             UpdateDateTimeValue(d, newDate, oldDate);
         }
 
         private static void SelectedTime_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            DateTime newDate = (e.NewValue as DateTime?) ?? DateTime.MinValue;
-            DateTime oldDate = (DateTime)d.GetValue(SelectedDateTimeProperty);
+            var newDate = e.NewValue as DateTime?;
+            var oldDate = d.GetValue(ValueProperty) as DateTime?;
             UpdateDateTimeValue(d, oldDate, newDate);
         }
 
-        private static void UpdateDateTimeValue(DependencyObject d, DateTime dateValue, DateTime timeValue)
+        private static void UpdateDateTimeValue(DependencyObject d, DateTime? dateValue, DateTime? timeValue)
         {
-            if (dateValue != timeValue)
+            if (dateValue != timeValue && (dateValue != null || timeValue != null))
             {
-                var newDateTime = new DateTime(dateValue.Year, dateValue.Month, dateValue.Day, timeValue.Hour, timeValue.Minute, timeValue.Second);
-                d.SetValue(SelectedDateTimeProperty, newDateTime);
+                dateValue = dateValue ?? DateTime.Now;
+                timeValue = timeValue ?? DateTime.Today;
+
+                var newDateTime = new DateTime(dateValue.Value.Year, dateValue.Value.Month, dateValue.Value.Day, timeValue.Value.Hour, timeValue.Value.Minute, timeValue.Value.Second);
+                d.SetValue(ValueProperty, newDateTime);
             }
         }
     }

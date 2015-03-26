@@ -406,7 +406,7 @@ namespace System.Windows.Controls
             control.TextAlignment = TextAlignment.Right;
 #else
             DateTimePicker control = new DateTimePicker() { Margin = new Thickness(0, 2, 18, 2) };
-            this.bindings.Add(property.Name, control.SetBinding(DateTimePicker.SelectedDateTimeProperty, binding));
+            this.bindings.Add(property.Name, control.SetBinding(DateTimePicker.ValueProperty, binding));
 #endif
 
             return control;
