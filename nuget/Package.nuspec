@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>DotNetProjects.WpfDataform</id>
+    <version>$version$</version>
+    <authors>DotNetProjects</authors>
+    <owners>DotNetProjects</owners>
+    <licenseUrl>http://www.gnu.de/documents/gpl-2.0.de.html</licenseUrl>
+    <projectUrl>https://github.com/dotnetprojects/SilverlightWpfDataform</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>WpfDataform</description>
+    <copyright>Copyright 2015</copyright>
+  </metadata>
+  <files>
+    <file src="..\WPF.DataForm\WPF.DataForm\bin\Debug\WPF.DataForm.dll" target="lib\net40" />
+    <file src="..\WPF.DataForm\WPF.DataForm\bin\Debug\WPF.DataForm.pdb" target="lib\net40" />	
+  </files>
+</package>
