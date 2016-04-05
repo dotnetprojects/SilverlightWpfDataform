@@ -27,7 +27,7 @@ test: off
 artifacts:
   - path: WPF.DataForm\WPF.DataForm\bin\Debug\WPF.DataForm.dll
   - path: WPF.DataForm\WPF.DataForm\bin\Debug\WPF.DataForm.pdb
-  - path: '**\DotNetProjects*.nupkg'
+  - path: '**\DotNetProjects.WpfDataform*.nupkg'
 
 #uncomment to publish to NuGet
 deploy:
