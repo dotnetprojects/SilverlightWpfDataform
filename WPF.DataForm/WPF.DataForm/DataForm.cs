@@ -316,6 +316,7 @@ namespace System.Windows.Controls
                     binding.ValidatesOnDataErrors = true;
                     binding.ValidatesOnExceptions = true;
                     binding.NotifyOnValidationError = true;
+                    binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
 
 #if !SILVERLIGHT
                     //binding.NotifyOnTargetUpdated = true;
@@ -601,9 +602,45 @@ namespace System.Windows.Controls
 #if !SILVERLIGHT
             CalculatorUpDown calculatorUpDown = new CalculatorUpDown() { Margin = new Thickness(0, 3, 18, 3) };
             calculatorUpDown.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
-
             // Binding
             this.bindings.Add(property.Name, calculatorUpDown.SetBinding(CalculatorUpDown.ValueProperty, binding));
+#else
+            Border calculatorUpDown = new Border() { Opacity = 1.0, Background = new SolidColorBrush(Colors.White), Margin = new Thickness(0, 3, 18, 3) };
+            NumericUpDown n = new NumericUpDown() { };
+            calculatorUpDown.Child = n;
+            n.IsEnabled = (bindables[property.Name].Direction == BindingDirection.TwoWay);
+
+            // Binding
+            this.bindings.Add(property.Name, n.SetBinding(NumericUpDown.ValueProperty, binding));
+#endif
+            return calculatorUpDown;
+        }
+        private FrameworkElement GenerateDoubleUpDown(PropertyInfo property, Binding binding)
+        {
+#if !SILVERLIGHT
+            DoubleUpDown calculatorUpDown = new DoubleUpDown() { Margin = new Thickness(0, 3, 18, 3) };
+            calculatorUpDown.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
+            // Binding
+            this.bindings.Add(property.Name, calculatorUpDown.SetBinding(DoubleUpDown.ValueProperty, binding));
+#else
+            Border calculatorUpDown = new Border() { Opacity = 1.0, Background = new SolidColorBrush(Colors.White), Margin = new Thickness(0, 3, 18, 3) };
+            NumericUpDown n = new NumericUpDown() { };
+            calculatorUpDown.Child = n;
+            n.IsEnabled = (bindables[property.Name].Direction == BindingDirection.TwoWay);
+
+            // Binding
+            this.bindings.Add(property.Name, n.SetBinding(NumericUpDown.ValueProperty, binding));
+#endif
+            return calculatorUpDown;
+        }
+
+        private FrameworkElement GenerateSingleUpDown(PropertyInfo property, Binding binding)
+        {
+#if !SILVERLIGHT
+            SingleUpDown calculatorUpDown = new SingleUpDown() { Margin = new Thickness(0, 3, 18, 3) };
+            calculatorUpDown.IsReadOnly = !(bindables[property.Name].Direction == BindingDirection.TwoWay);
+            // Binding
+            this.bindings.Add(property.Name, calculatorUpDown.SetBinding(SingleUpDown.ValueProperty, binding));
 #else
             Border calculatorUpDown = new Border() { Opacity = 1.0, Background = new SolidColorBrush(Colors.White), Margin = new Thickness(0, 3, 18, 3) };
             NumericUpDown n = new NumericUpDown() { };
@@ -693,6 +730,11 @@ namespace System.Windows.Controls
                         wrp.SetBinding(NullableContentWrapper.ObjectValueProperty, b);
                         b = new Binding("Value") { Mode = BindingMode.TwoWay, Source = wrp, ConverterCulture = CultureInfo.CurrentCulture};
                         b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+
+                        b.ConverterCulture = CultureInfo.CurrentCulture;
+                        b.ValidatesOnDataErrors = true;
+                        b.ValidatesOnExceptions = true;
+                        b.NotifyOnValidationError = true;
                     }
 
                     if (type == typeof (DateTime))
@@ -733,9 +775,13 @@ namespace System.Windows.Controls
                     {
                         control = GenerateDecimalUpDown(property, b);
                     }
-                    else if (type == typeof (Single) || type == typeof (Double))
+                    else if (type == typeof (Double) )
                     {
-                        control = GenerateCalculator(property, b);
+                        control = GenerateDoubleUpDown(property, b);
+                    }
+                    else if (type == typeof(Single))
+                    {
+                        control = GenerateSingleUpDown(property, b);
                     }
                     else if (type == typeof (Color))
                     {
