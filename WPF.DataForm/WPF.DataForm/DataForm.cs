@@ -691,7 +691,8 @@ namespace System.Windows.Controls
                         wrp.ObjectType = type;
                         
                         wrp.SetBinding(NullableContentWrapper.ObjectValueProperty, b);
-                        b = new Binding("Value") { Mode = BindingMode.TwoWay, Source = wrp, ConverterCulture = CultureInfo.CurrentCulture};                        
+                        b = new Binding("Value") { Mode = BindingMode.TwoWay, Source = wrp, ConverterCulture = CultureInfo.CurrentCulture};
+                        b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
                     }
 
                     if (type == typeof (DateTime))
