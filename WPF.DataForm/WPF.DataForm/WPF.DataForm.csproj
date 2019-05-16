@@ -76,7 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DotNetProjects.Extended.Wpf.Toolkit">
-      <Version>3.2.55</Version>
+      <Version>3.2.59</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
